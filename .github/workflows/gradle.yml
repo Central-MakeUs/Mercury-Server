@@ -1,0 +1,62 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    # Workflow가 실행되는 vm의 OS 지정
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      # Repository 코드를 Workflow 환경으로 가져오기
+      - uses: actions/checkout@v4
+
+      # Java 17 설정
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # yml 파일의 환경변수 설정
+      - name: Set yml file
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/main/resources/application.yml
+        env:
+          spring.datasource.url: ${{ secrets.DB_MYSQL_URL }}
+          spring.datasource.username: ${{ secrets.DB_MYSQL_USERNAME }}
+          spring.datasource.password: ${{ secrets.DB_MYSQL_PASSWORD }}
+
+      # 실행 속도 향상을 위한 Gradle 종속성 캐싱
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+
+      # gradlew 파일에 실행 권한 부여
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      # Spring Boot 애플리케이션 빌드
+      - name: Build with Gradle Wrapper
+        run: ./gradlew build
+
+      # Docker 이미지 빌드
+      - name: docker image build
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server .
+
+      # DockerHub 로그인
+      - name: docker login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      # DockerHub 이미지 푸시
+      - name: docker Hub push
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server
