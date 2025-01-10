@@ -1,4 +1,4 @@
-name: Java CI with Gradle
+name: CI/CD
 
 on:
   push:
@@ -60,3 +60,23 @@ jobs:
       # DockerHub 이미지 푸시
       - name: docker Hub push
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # EC2에 배포
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server
+            docker stop $(docker ps -q) || true
+            docker rm $(docker ps -a -q) || true
+            # 사용하지 않는 이미지 정리
+            docker image prune -f
+            docker run -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server
