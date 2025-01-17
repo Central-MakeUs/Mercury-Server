@@ -19,3 +19,22 @@ logging.level:
     org.hibernate:
         SQL: DEBUG
         type: trace
+
+# swagger 관련 설정
+springdoc:
+  # API 문서 관련 설정
+  api-docs:
+    enabled: true          # 기본값: true
+    path: /api-docs        # API 문서 JSON 경로 (기본값: /v3/api-docs)
+  # Swagger UI 관련 설정
+  swagger-ui:
+    path: /swagger-ui.html             # Swagger UI 페이지 경로
+    disable-swagger-default-url: true   # 기본 petstore 예제 URL 비활성화
+    groups-order: DESC                  # Tag의 알파벳 내림차순으로 정렬
+    operationsSorter: method            # API 목록을 HTTP 메서드 순으로 정렬(GET, POST, PUT, DELETE 순)
+  # API 기본 설정
+  default-produces-media-type: application/json
+  default-consumes-media-type: application/json
+  # API 경로 패턴 설정
+  paths-to-match:
+    - /**             # /로 시작하는 경로만 문서화
