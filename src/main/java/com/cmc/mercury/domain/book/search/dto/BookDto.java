@@ -21,7 +21,7 @@ public record BookDto(
     public static BookDto from(JSONObject itemJson) {
         // 구매 링크에서 TTBKey 있는 부분 자르기
         String fullLink = itemJson.getString("link");
-        String cutLink = fullLink.substring(0, fullLink.indexOf("&copyPaper"));
+        String cutLink = fullLink.substring(0, fullLink.indexOf(";copyPaper"));
 
         return new BookDto(
                 itemJson.getString("title"),
