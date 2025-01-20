@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public enum SortType {
 
-    SALESPOINT("SalesPoint"), // 판매량순
+    SALES_POINT("SalesPoint"), // 판매량순
     PUBLISH_TIME("PublishTime"); // 출간일순
 
     private final String sortName;
