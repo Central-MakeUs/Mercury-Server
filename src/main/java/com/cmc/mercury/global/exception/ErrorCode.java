@@ -18,9 +18,11 @@ public enum ErrorCode {
     RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND, "Common404", "리소스를 찾을 수 없습니다."),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "Common405", "올바르지 않은 메서드입니다."),
     CONFLICT_ERROR(HttpStatus.CONFLICT, "Common409", "중복된 요청입니다."),
-    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Common500", "서버 에러입니다.");
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Common500", "서버 에러입니다."),
 
     // 도메인별
+    // 알라딘 api
+    ALADIN_API_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"Aladin500", "알라딘 API 호출 실패");
 
     private final HttpStatus httpStatus;
     private final String code;
