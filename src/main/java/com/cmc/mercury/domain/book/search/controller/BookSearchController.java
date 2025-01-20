@@ -8,6 +8,7 @@ import com.cmc.mercury.global.response.SuccessResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
@@ -21,7 +22,7 @@ public class BookSearchController {
 
     @GetMapping("/search")
     public Mono<SuccessResponse<BookSearchResponse>> searchBooks(
-            @Valid BookSearchRequest request) {
+            @ModelAttribute @Valid BookSearchRequest request) {
         return bookSearchService.searchBooks(request)
                 .map(SuccessResponse::ok);
     }
