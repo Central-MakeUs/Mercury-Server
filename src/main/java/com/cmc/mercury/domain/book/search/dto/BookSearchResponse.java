@@ -12,8 +12,10 @@ public record BookSearchResponse(
 
         @Schema(description = "Book Dto 객체들")
         List<BookDto> books,
-        @Schema(description = "API의 총 결과 수")
+        @Schema(description = "API의 총 도서 결과 수")
         int totalResults,
+        @Schema(description = "현재 페이지에 출력된 도서 결과 수")
+        int currentResults,
         @Schema(description = "현재 page 수")
         int currentPage, // 현재 페이지 (다음 요청 시 필요)
         @Schema(description = "다음 페이지 존재 여부")
@@ -30,6 +32,7 @@ public record BookSearchResponse(
         return new BookSearchResponse(
                 books,
                 objectResponse.getInt("totalResults"),
+                items.length(),
                 objectResponse.getInt("startIndex"),
                 hasNext
         );
