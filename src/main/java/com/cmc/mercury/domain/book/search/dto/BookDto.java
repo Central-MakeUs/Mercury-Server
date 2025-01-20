@@ -15,7 +15,9 @@ public record BookDto(
         @Schema(description = "isbn 13자리")
         String isbn13,
         @Schema(description = "구매 링크")
-        String link
+        String link,
+        @Schema(description = "출판사")
+        String publisher
 ) {
     // json(item 부분만) -> Book
     public static BookDto from(JSONObject itemJson) {
@@ -28,7 +30,8 @@ public record BookDto(
                 itemJson.getString("cover"),
                 itemJson.getString("author"),
                 itemJson.getString("isbn13"),
-                cutLink
+                cutLink,
+                itemJson.getString("publisher")
         );
     }
 }
