@@ -3,7 +3,6 @@ package com.cmc.mercury.domain.book.search.controller;
 import com.cmc.mercury.domain.book.search.dto.BookSearchRequest;
 import com.cmc.mercury.domain.book.search.dto.BookSearchResponse;
 import com.cmc.mercury.domain.book.search.service.BookSearchService;
-import com.cmc.mercury.domain.book.search.service.BookSearchTestService;
 import com.cmc.mercury.global.response.SuccessResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
