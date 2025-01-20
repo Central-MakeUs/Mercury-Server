@@ -1,4 +1,4 @@
-package com.cmc.mercury.domain.book.record.entity;
+package com.cmc.mercury.domain.book.entity;
 
 import com.cmc.mercury.global.domain.BaseEntity;
 import jakarta.persistence.*;
@@ -32,12 +32,16 @@ public class Book extends BaseEntity {
     @Column(nullable = false)
     private String link;
 
+    @Column(nullable = false)
+    private String publisher;
+
     @Builder
-    public Book(String title, String coverImageUrl, String author, String isbn13, String link) {
+    public Book(String title, String coverImageUrl, String author, String isbn13, String link, String publisher) {
         this.title = title;
         this.coverImageUrl = coverImageUrl;
         this.author = author;
         this.isbn13 = isbn13;
         this.link = link;
+        this.publisher = publisher;
     }
 }

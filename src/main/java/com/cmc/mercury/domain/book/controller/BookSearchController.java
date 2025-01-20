@@ -1,8 +1,8 @@
-package com.cmc.mercury.domain.book.search.controller;
+package com.cmc.mercury.domain.book.controller;
 
-import com.cmc.mercury.domain.book.search.dto.BookSearchRequest;
-import com.cmc.mercury.domain.book.search.dto.BookSearchResponse;
-import com.cmc.mercury.domain.book.search.service.BookSearchService;
+import com.cmc.mercury.domain.book.dto.BookSearchRequest;
+import com.cmc.mercury.domain.book.dto.BookSearchResponse;
+import com.cmc.mercury.domain.book.service.BookSearchService;
 import com.cmc.mercury.global.response.SuccessResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

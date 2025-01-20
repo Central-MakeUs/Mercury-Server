@@ -1,4 +1,4 @@
-package com.cmc.mercury.domain.book.search.dto;
+package com.cmc.mercury.domain.book.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;

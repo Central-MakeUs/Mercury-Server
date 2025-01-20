@@ -1,7 +1,7 @@
-package com.cmc.mercury.domain.book.search.service;
+package com.cmc.mercury.domain.book.service;
 
-import com.cmc.mercury.domain.book.search.dto.BookSearchRequest;
-import com.cmc.mercury.domain.book.search.dto.BookSearchResponse;
+import com.cmc.mercury.domain.book.dto.BookSearchRequest;
+import com.cmc.mercury.domain.book.dto.BookSearchResponse;
 import com.cmc.mercury.global.exception.CustomException;
 import com.cmc.mercury.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
