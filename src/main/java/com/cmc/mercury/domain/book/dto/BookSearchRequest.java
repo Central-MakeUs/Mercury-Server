@@ -15,7 +15,7 @@ public record BookSearchRequest (
 
         @NotNull(message = "정렬 방식은 필수입니다.")
         @Schema(description = "정렬 방식(관련도순/출간일순)")
-        SortType sortType,
+        BookSortType sortType,
 
         @NotNull(message = "시작 페이지 값은 필수입니다.")
         @Min(value = 1, message = "페이지 번호는 1 이상이어야 합니다")
