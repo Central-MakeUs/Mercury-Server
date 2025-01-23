@@ -26,7 +26,7 @@ public record BookSearchResponse(
         JSONArray items = objectResponse.getJSONArray("item");
         List<BookDto> books = new ArrayList<>();
         for (int i = 0; i < items.length(); i++) {
-            books.add(BookDto.from(items.getJSONObject(i)));
+            books.add(BookDto.fromJson(items.getJSONObject(i)));
         }
 
         return new BookSearchResponse(

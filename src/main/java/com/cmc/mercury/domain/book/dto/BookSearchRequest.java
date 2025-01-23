@@ -14,7 +14,7 @@ public record BookSearchRequest (
         String query,
 
         @NotNull(message = "정렬 방식은 필수입니다.")
-        @Schema(description = "정렬 방식(관련도순/출간일순)")
+        @Schema(description = "정렬 방식(SALES_POINT 또는 PUBLISH_TIME)")
         BookSortType sortType,
 
         @NotNull(message = "시작 페이지 값은 필수입니다.")

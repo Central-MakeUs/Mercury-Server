@@ -1,0 +1,46 @@
+package com.cmc.mercury.domain.memo.entity;
+
+import com.cmc.mercury.domain.record.entity.RecordDetail;
+import com.cmc.mercury.global.domain.BaseEntity;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Entity
+@Getter
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+public class Memo extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "memo_id")
+    private Long id;
+
+    @Column
+    private String content;
+
+    @Column(nullable = false)
+    private int gauge;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "record_detail_id", nullable = false)
+    private RecordDetail recordDetail;
+
+    @Builder
+    public Memo(String content, int gauge, RecordDetail recordDetail) {
+        this.content = content;
+        this.gauge = gauge;
+        this.recordDetail = recordDetail;
+    }
+
+    // RecordDetail와의 연관관계 메서드
+    public void setRecordDetail(RecordDetail recordDetail) {
+        this.recordDetail = recordDetail;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
+}
