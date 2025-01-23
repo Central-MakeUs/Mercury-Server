@@ -10,6 +10,7 @@ public enum ErrorCode {
 
     // Common
     INVALID_REQUEST_ERROR(HttpStatus.BAD_REQUEST, "Common400", "적절하지 않은 요청입니다."),
+    REQUEST_BODY_MISSING(HttpStatus.BAD_REQUEST, "Common400", "올바르지 않은 요청 본문입니다."),
     PATH_VARIABLE_MISSING(HttpStatus.BAD_REQUEST, "Common400", "URL 경로 변수가 누락되었습니다."),
     QUERY_PARAM_MISSING(HttpStatus.BAD_REQUEST, "Common400", "필수 쿼리 파라미터가 누락되었습니다."),
     HEADER_MISSING(HttpStatus.BAD_REQUEST, "Common400", "필수 헤더가 누락되었습니다."),
@@ -22,7 +23,30 @@ public enum ErrorCode {
 
     // 도메인별
     // 알라딘 api
-    ALADIN_API_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"Aladin500", "알라딘 API 호출 실패");
+    ALADIN_API_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"Aladin500", "알라딘 API 호출 실패"),
+
+    // User
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User404", "사용자를 찾을 수 없습니다."),
+
+    // Book
+    BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "Book404", "도서를 찾을 수 없습니다."),
+    BOOK_SAVE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Book500", "도서 정보 저장에 실패했습니다."),
+
+    // Record
+    RECORD_NOT_FOUND(HttpStatus.NOT_FOUND, "Record404", "독서 기록 객체를 찾을 수 없습니다."),
+    RECORD_CREATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Record500", "독서 기록 객체 생성에 실패했습니다."),
+    // RECORD_DELETE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Record500", "독서 기록 객체 삭제에 실패했습니다."),
+    // UNAUTHORIZED_RECORD_ACCESS(HttpStatus.FORBIDDEN, "Record403", "해당 독서 기록 객체에 대한 접근 권한이 없습니다."),
+
+    // RecordDetail
+    RECORD_DETAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "RecordDetail404", "독서 기록 상세를 찾을 수 없습니다."),
+    // RECORD_DETAIL_CREATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "RecordDetail500", "독서 기록 상세 생성에 실패했습니다."),
+
+    // Memo
+    MEMO_NOT_BELONG_TO_RECORD(HttpStatus.BAD_REQUEST, "Memo400", "해당 독서 기록 객체에 속한 메모가 아닙니다."),
+    MEMO_NOT_FOUND(HttpStatus.NOT_FOUND, "Memo404", "메모를 찾을 수 없습니다.");
+    // MEMO_CREATE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Memo500", "메모 생성에 실패했습니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;
