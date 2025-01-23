@@ -43,4 +43,10 @@ public class Record extends BaseEntity {
         this.user = user;
         this.book = book;
     }
+
+    // 메모 생성, 수정 시 Record와 RecordDetail의 updatedAt을 함께 업데이트
+    public void updateLastModifiedDateWithDetail(LocalDateTime modifiedAt) {
+        this.touch(modifiedAt);
+        this.recordDetail.updateLastModifiedDate(modifiedAt);
+    }
 }

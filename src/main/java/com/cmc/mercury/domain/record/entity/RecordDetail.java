@@ -52,4 +52,8 @@ public class RecordDetail extends BaseEntity {
     public void updateGauge(int gauge) {
         this.updatedGauge = gauge;
     }
+
+    public void updateLastModifiedDate(LocalDateTime modifiedAt) {
+        touch(modifiedAt);
+    }
 }
