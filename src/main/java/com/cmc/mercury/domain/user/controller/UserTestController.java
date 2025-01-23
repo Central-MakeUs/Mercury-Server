@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users/test/")
+@RequestMapping("/users/test")
 @RequiredArgsConstructor
 @Tag(name = "UserTestController", description = "테스트 유저 생성 API")
 public class UserTestController {
