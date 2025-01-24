@@ -39,6 +39,12 @@ springdoc:
   paths-to-match:
     - /**             # /로 시작하는 경로만 문서화
 
+# swagger 서버 분리
+swagger:
+  server:
+    http-url: ${SWAGGER_HTTP_URL}
+    https-url: ${SWAGGER_HTTPS_URL}
+
 # 알라딘 Open API 상품 검색 관련 설정
 aladin:
   api:

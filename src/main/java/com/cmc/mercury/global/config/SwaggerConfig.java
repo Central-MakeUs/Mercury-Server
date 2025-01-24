@@ -13,10 +13,10 @@ import java.util.List;
 @Configuration
 public class SwaggerConfig {
 
-    @Value("${SWAGGER_HTTPS_URL}")
+    @Value("${swagger.server.https-url}")
     private String httpsUrl;
 
-    @Value("${SWAGGER_HTTP_URL}")
+    @Value("${swagger.server.http-url}")
     private String httpUrl;
 
     @Bean
