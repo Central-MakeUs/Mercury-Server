@@ -34,6 +34,9 @@ jobs:
           spring.datasource.username: ${{ secrets.DB_MYSQL_USERNAME }}
           spring.datasource.password: ${{ secrets.DB_MYSQL_PASSWORD }}
           aladin.api.ttbkey: ${{ secrets.ALADIN_TTB_KEY }}
+          swagger.server.http-url: ${{ secrets.SWAGGER_HTTP_URL }}
+          swagger.server.https-url: ${{ secrets.SWAGGER_HTTPS_URL }}
+
 
       # 실행 속도 향상을 위한 Gradle 종속성 캐싱
       - name: Setup Gradle
