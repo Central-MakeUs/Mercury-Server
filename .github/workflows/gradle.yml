@@ -49,7 +49,7 @@ jobs:
 
       # Docker 이미지 빌드
       - name: docker image build
-        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server .
+        run: docker build --build-arg TZ=Asia/Seoul -t ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server .
 
       # DockerHub 로그인
       - name: docker login
@@ -80,4 +80,4 @@ jobs:
             docker rm $(docker ps -a -q) || true
             # 사용하지 않는 이미지 정리
             docker image prune -f
-            docker run -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server
+            docker run -d -e TZ=Asia/Seoul -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server
