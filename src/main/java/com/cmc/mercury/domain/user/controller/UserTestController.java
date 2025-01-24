@@ -21,12 +21,15 @@ public class UserTestController {
     private final UserTestService userTestService;
 
     @GetMapping("/get-or-create")
-    public User getOrCreateTestUser(@RequestParam Long userId) {
-        return userTestService.getOrCreateTestUser(userId);
+    public SuccessResponse<User> getOrCreateTestUser(@RequestParam Long userId) {
+
+        return SuccessResponse.ok(userTestService.getOrCreateTestUser(userId));
     }
 
     @GetMapping()
-    public List<User> getAllUsers() {
-        return userTestService.getListUsers();
+    public SuccessResponse<List<User>> getAllUsers() {
+
+
+        return SuccessResponse.ok(userTestService.getListUsers());
     }
 }
