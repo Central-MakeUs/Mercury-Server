@@ -3,15 +3,29 @@ package com.cmc.mercury.global.config;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.List;
 
 @Configuration
 public class SwaggerConfig {
 
+    @Value("${SWAGGER_HTTPS_URL}")
+    private String httpsUrl;
+
+    @Value("${SWAGGER_HTTP_URL}")
+    private String httpUrl;
+
     @Bean
     public OpenAPI openAPI() {
         return new OpenAPI()
+                .servers(List.of(
+                        new Server().url(httpsUrl).description("배포(HTTPS)"),
+                        new Server().url(httpUrl).description("로컬(HTTP)")
+                ))
                 .components(new Components())
                 .info(apiInfo());
     }
