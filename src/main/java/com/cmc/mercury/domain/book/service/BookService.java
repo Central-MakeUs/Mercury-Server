@@ -1,7 +1,11 @@
 package com.cmc.mercury.domain.book.service;
 
+import com.cmc.mercury.domain.book.dto.BookExistResponse;
 import com.cmc.mercury.domain.book.dto.BookSearchRequest;
 import com.cmc.mercury.domain.book.dto.BookSearchResponse;
+import com.cmc.mercury.domain.book.repository.BookRepository;
+import com.cmc.mercury.domain.record.entity.Record;
+import com.cmc.mercury.domain.record.repository.RecordRepository;
 import com.cmc.mercury.global.exception.CustomException;
 import com.cmc.mercury.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +17,15 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class BookSearchService {
+public class BookService {
+
+    private final BookRepository bookRepository;
+    private final RecordRepository recordRepository;
 
     @Value("${aladin.api.url}")
     private String aladinUrl;
@@ -80,5 +89,22 @@ public class BookSearchService {
                 .toUriString();
         // log.info("Built API request URL: {}", url);
         return url;
+    }
+
+    public BookExistResponse existBooks(Long testUserId, String isbn13) {
+
+        // Book 존재 여부부터 확인
+        if (!bookRepository.existsByIsbn13(isbn13)) {
+            return new BookExistResponse(false, null);
+        }
+
+        // 사용자에게 독서 기록 존재 여부 확인
+        Optional<Record> record = recordRepository.findByUser_TestUserIdAndBook_Isbn13(testUserId, isbn13);
+
+        if (record.isEmpty()) {
+            return new BookExistResponse(false, null);
+        }
+
+        return new BookExistResponse(true, record.get().getId());
     }
 }

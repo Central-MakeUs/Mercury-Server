@@ -36,7 +36,6 @@ public class RecordService {
 
         User user = userTestService.getOrCreateTestUser(testUserId);
         // 저장되지 않은 도서면 저장
-        // 유저가 해당 도서에 대한 기록을 남긴 적이 있는지 검사해야 하나? -> api만 잘 연결하면 될 듯
         Book book = bookRepository.findByIsbn13(request.book().isbn13())
                 .orElseGet(() -> {
                     try {
