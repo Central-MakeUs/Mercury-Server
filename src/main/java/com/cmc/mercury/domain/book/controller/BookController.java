@@ -1,5 +1,6 @@
 package com.cmc.mercury.domain.book.controller;
 
+import com.cmc.mercury.domain.book.dto.BookExistResponse;
 import com.cmc.mercury.domain.book.dto.BookSearchRequest;
 import com.cmc.mercury.domain.book.dto.BookSearchResponse;
 import com.cmc.mercury.domain.book.service.BookSearchService;
@@ -29,4 +30,10 @@ public class BookSearchController {
         return bookSearchService.searchBooks(request)
                 .map(SuccessResponse::ok);
     }
+
+    @GetMapping("/exist")
+    @Operation(summary = "기록 중복 생성 검사",
+            description = "isbn을 통해 해당 도서에 대한 기록을 생성한 적이 있는지의 여부를 반환합니다.")
+    public SuccessResponse<BookExistResponse> 
+
 }
