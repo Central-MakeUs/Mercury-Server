@@ -32,4 +32,6 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
             @Param("testUserId") Long testUserId,
             @Param("keyword") String keyword,
             @Param("sortType") String sortType);
+
+    Optional<Record> findByUser_TestUserIdAndBook_Isbn13(Long testUserId, String isbn13);
 }
