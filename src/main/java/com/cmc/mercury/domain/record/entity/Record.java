@@ -33,15 +33,19 @@ public class Record extends BaseEntity {
     @OneToOne(mappedBy = "record", cascade = CascadeType.ALL, orphanRemoval = true)
     private RecordDetail recordDetail;
 
+    @Column(nullable = false)
+    private int acquiredExp;
+
     // 연관관계 메서드
     public void setRecordDetail(RecordDetail recordDetail) {
         this.recordDetail = recordDetail;
         recordDetail.setRecord(this);
     }
     @Builder
-    public Record(User user, Book book) {
+    public Record(User user, Book book, int acquiredExp) {
         this.user = user;
         this.book = book;
+        this.acquiredExp = acquiredExp;
     }
 
     // 메모 생성, 수정 시 Record와 RecordDetail의 updatedAt을 함께 업데이트

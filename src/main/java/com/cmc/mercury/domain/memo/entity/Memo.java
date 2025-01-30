@@ -28,11 +28,20 @@ public class Memo extends BaseEntity {
     @JoinColumn(name = "record_detail_id", nullable = false)
     private RecordDetail recordDetail;
 
+    @Column(nullable = false)
+    private int acquiredExp;
+
+    // 기록 생성 시 추가되는 메모는 경험치 획득하지 않으므로 이를 구분하기 위한 필드
+    @Column(nullable = false)
+    private boolean isFirstMemo;
+
     @Builder
-    public Memo(String content, int gauge, RecordDetail recordDetail) {
+    public Memo(String content, int gauge, RecordDetail recordDetail, int acquiredExp, boolean isFirstMemo) {
         this.content = content;
         this.gauge = gauge;
         this.recordDetail = recordDetail;
+        this.acquiredExp = acquiredExp;
+        this.isFirstMemo = isFirstMemo;
     }
 
     // RecordDetail와의 연관관계 메서드
