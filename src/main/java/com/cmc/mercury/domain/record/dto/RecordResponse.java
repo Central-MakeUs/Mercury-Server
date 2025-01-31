@@ -21,7 +21,9 @@ public record RecordResponse (
         @Schema(description = "수정 일시")
         LocalDateTime updatedAt,
         @Schema(description = "도서 정보")
-        BookResponse book
+        BookResponse book,
+        @Schema(description = "얻은 경험치")
+        int acquiredExp
 ) {
         public static RecordResponse of(Record record, RecordDetail detail, String content) {
 
@@ -31,7 +33,8 @@ public record RecordResponse (
                         content,
                         record.getCreatedAt(),
                         record.getUpdatedAt(),
-                        BookResponse.from(record.getBook())
+                        BookResponse.from(record.getBook()),
+                        record.getAcquiredExp()
                 );
         }
 }
