@@ -19,12 +19,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class RecordService {
+
+    private static final int FIRST_EXP = 50;
+    private static final int NORMAL_EXP = 10;
+    private static final int MAX_DAILY_COUNT = 5;
 
     private final RecordRepository recordRepository;
     private final BookRepository bookRepository;
@@ -35,6 +40,10 @@ public class RecordService {
     public RecordResponse createRecord(Long testUserId, RecordRequest request) {
 
         User user = userTestService.getOrCreateTestUser(testUserId);
+
+        // 신규 독서기록 생성 경험치 계산
+        int acquiredExp = calculateRecordExp(testUserId, request.deviceTime());
+
         // 저장되지 않은 도서면 저장
         Book book = bookRepository.findByIsbn13(request.book().isbn13())
                 .orElseGet(() -> {
@@ -49,6 +58,7 @@ public class RecordService {
         Record record = Record.builder()
                 .user(user)
                 .book(book)
+                .acquiredExp(acquiredExp)
                 .build();
         //* Record savedRecord = recordRepository.save(record);
 
@@ -64,6 +74,8 @@ public class RecordService {
                 .content(request.content())
                 .gauge(request.gauge())
                 //*        .recordDetail(savedRecordDetail)
+                .acquiredExp(0)  // 신규 생성 시 메모는 경험치 없음
+                .isFirstMemo(true)  // Record 생성 시의 메모는 첫 메모
                 .build();
         //* Memo savedMemo = memoRepository.save(memo);
 
@@ -74,9 +86,29 @@ public class RecordService {
         // 저장 (cascade로 인해 record를 저장하면 recordDetail과 memo도 함께 저장됨)
         Record savedRecord = recordRepository.save(record);
 
+        // 사용자 경험치 업데이트
+        user.updateExp(user.getExp() + acquiredExp);
+
         //* return RecordResponse.of(record, recordDetail, savedMemo.getContent());
         return RecordResponse.of(savedRecord, savedRecord.getRecordDetail(), memo.getContent());
     }
+
+    private int calculateRecordExp(Long testUserId, LocalDateTime deviceTime) {
+
+        LocalDateTime startOfDay = deviceTime.toLocalDate().atStartOfDay();
+
+        boolean isFirstofDay = !recordRepository.existsByUser_testUserIdAndCreatedAtBetween(testUserId, startOfDay, deviceTime);
+        if (isFirstofDay) {
+            return FIRST_EXP;
+       }
+
+        int dailyRecordCount = recordRepository.countByUser_testUserIdAndCreatedAtBetween(testUserId, startOfDay, deviceTime);
+        if (dailyRecordCount >= MAX_DAILY_COUNT) { // 현재 생성하려는 기록 포함 안됨 => 등호 필요
+            return 0;
+        }
+        return NORMAL_EXP;
+    }
+
 
     public RecordListResponse getRecordList(Long testUserId, RecordSortType sortType) {
 
@@ -108,10 +140,18 @@ public class RecordService {
     @Transactional
     public void deleteRecord(Long testUserId, Long recordId) {
 
-//        User user = userTestService.getOrCreateTestUser(testUserId)
+        User user = userTestService.getOrCreateTestUser(testUserId);
 
         Record record = recordRepository.findByIdAndUser_TestUserId(recordId, testUserId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
+
+        // 차감할 경험치 계산
+/*        int reduceExp = record.getAcquiredExp();
+        reduceExp += record.getRecordDetail().getMemos().stream()
+                .mapToInt(Memo::getAcquiredExp)
+                .sum();
+
+        user.updateExp(user.getExp() - reduceExp);*/
 
         recordRepository.delete(record);
     }
