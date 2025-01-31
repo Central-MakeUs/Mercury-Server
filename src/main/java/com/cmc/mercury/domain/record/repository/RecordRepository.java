@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,4 +35,10 @@ public interface RecordRepository extends JpaRepository<Record, Long> {
             @Param("sortType") String sortType);
 
     Optional<Record> findByUser_TestUserIdAndBook_Isbn13(Long testUserId, String isbn13);
+
+    boolean existsByUser_testUserIdAndCreatedAtBetween(
+            Long testUserId, LocalDateTime startOfDay, LocalDateTime deviceTime);
+
+    int countByUser_testUserIdAndCreatedAtBetween(
+            Long testUserId, LocalDateTime startOfDay, LocalDateTime deviceTime);
 }
