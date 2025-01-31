@@ -33,7 +33,7 @@ public class TimerService {
 
         User user = userTestService.getOrCreateTestUser(testUserId);
 
-        int todayTotalExp = calculateTodayTotalExp(testUserId);
+        int todayTotalExp = calculateTodayTotalExp(testUserId, request.deviceTime());
 
         int newExp = calculateExp(request.seconds());
 
@@ -77,15 +77,14 @@ public class TimerService {
     }
 
     // 오늘 획득한 총 경험치 계산
-    private int calculateTodayTotalExp(Long testUserId) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime startOfDay = now.toLocalDate().atStartOfDay();
-        LocalDateTime endOfDay = startOfDay.plusDays(1);
+    private int calculateTodayTotalExp(Long testUserId, LocalDateTime deviceTime) {
+
+        LocalDateTime startOfDay = deviceTime.toLocalDate().atStartOfDay();  // 오늘 하루(일일)의 기준은 device time으로 00시 00분 자정
 
         return timerRepository.findAllByUser_testUserIdAndCreatedAtBetween(
                         testUserId,
                         startOfDay,
-                        endOfDay
+                        deviceTime
                 ).stream()
                 .mapToInt(Timer::getAcquiredExp)
                 .sum();
