@@ -19,7 +19,9 @@ public record MemoResponse(
         @Schema(description = "수정 일시")
         LocalDateTime updatedAt,
         @Schema(description = "기록 객체 ID")
-        Long recordId
+        Long recordId,
+        @Schema(description = "얻은 경험치")
+        int acquiredExp
 ) {
         // Memo -> Dto
         public static MemoResponse from(Memo memo, Long recordId) {
@@ -30,7 +32,8 @@ public record MemoResponse(
                         memo.getGauge(),
                         memo.getCreatedAt(),
                         memo.getUpdatedAt(),
-                        recordId
+                        recordId,
+                        memo.getAcquiredExp()
                 );
         }
 }
