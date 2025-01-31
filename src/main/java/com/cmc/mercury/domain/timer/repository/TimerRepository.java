@@ -12,5 +12,5 @@ public interface TimerRepository extends JpaRepository<Timer, Long> {
 
     List<Timer> findAllByUser_testUserId(Long testUserId);
 
-    List<Timer> findAllByUser_testUserIdAndCreatedAtBetween(Long testUserId, LocalDateTime startofDay, LocalDateTime endofDay);
+    List<Timer> findAllByUser_testUserIdAndCreatedAtBetween(Long testUserId, LocalDateTime startOfDay, LocalDateTime deviceTime);
 }
