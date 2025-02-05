@@ -7,7 +7,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -28,8 +28,8 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
-  access-token-validity: ${JWT_ACCESS_VALIDITY}    # 50분
-  refresh-token-validity: ${JWT_REFRESH_VALIDITY}   # 100분
+  access-token-validity: ${JWT_ACCESS_VALIDITY}
+  refresh-token-validity: ${JWT_REFRESH_VALIDITY}
 
 logging.level:
     org.hibernate:
