@@ -15,6 +15,22 @@ spring:
   jackson:
     time-zone: Asia/Seoul # Hibernate 타임존 설정
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH_GOOGLE_ID}
+            client-secret: ${OAUTH_GOOGLE_SECRET}
+            scope:
+              - email
+              - profile
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-validity: ${JWT_ACCESS_VALIDITY}    # 50분
+  refresh-token-validity: ${JWT_REFRESH_VALIDITY}   # 100분
+
 logging.level:
     org.hibernate:
         SQL: DEBUG
