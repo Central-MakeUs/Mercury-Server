@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface TimerRepository extends JpaRepository<Timer, Long> {
 
-    List<Timer> findAllByUser_testUserId(Long testUserId);
+    List<Timer> findAllByUser_Id(Long userId);
 
-    List<Timer> findAllByUser_testUserIdAndCreatedAtBetween(Long testUserId, LocalDateTime startOfDay, LocalDateTime deviceTime);
+    List<Timer> findAllByUser_IdAndCreatedAtBetween(Long userId, LocalDateTime startOfDay, LocalDateTime deviceTime);
 }

@@ -6,6 +6,7 @@ import com.cmc.mercury.domain.book.dto.BookSearchResponse;
 import com.cmc.mercury.domain.book.repository.BookRepository;
 import com.cmc.mercury.domain.record.entity.Record;
 import com.cmc.mercury.domain.record.repository.RecordRepository;
+import com.cmc.mercury.domain.user.entity.User;
 import com.cmc.mercury.global.exception.CustomException;
 import com.cmc.mercury.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -91,7 +92,7 @@ public class BookService {
         return url;
     }
 
-    public BookExistResponse existBooks(Long testUserId, String isbn13) {
+    public BookExistResponse existBooks(User user, String isbn13) {
 
         // Book 존재 여부부터 확인
         if (!bookRepository.existsByIsbn13(isbn13)) {
@@ -99,7 +100,7 @@ public class BookService {
         }
 
         // 사용자에게 독서 기록 존재 여부 확인
-        Optional<Record> record = recordRepository.findByUser_TestUserIdAndBook_Isbn13(testUserId, isbn13);
+        Optional<Record> record = recordRepository.findByUser_IdAndBook_Isbn13(user.getId(), isbn13);
 
         if (record.isEmpty()) {
             return new BookExistResponse(false, null);

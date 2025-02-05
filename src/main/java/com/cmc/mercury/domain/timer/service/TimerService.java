@@ -6,7 +6,7 @@ import com.cmc.mercury.domain.timer.dto.TimerResponse;
 import com.cmc.mercury.domain.timer.entity.Timer;
 import com.cmc.mercury.domain.timer.repository.TimerRepository;
 import com.cmc.mercury.domain.user.entity.User;
-import com.cmc.mercury.domain.user.service.UserTestService;
+import com.cmc.mercury.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.List;
 public class TimerService {
 
     private final TimerRepository timerRepository;
-    private final UserTestService userTestService;
+    private final UserService userService;
 
     private static final int MIN_EXP_MINUTES = 5;
     private static final int MAX_EXP_MINUTES = 25;
@@ -29,11 +29,9 @@ public class TimerService {
 
 
     @Transactional
-    public TimerResponse createTimer(Long testUserId, TimerRequest request) {
+    public TimerResponse createTimer(User user, TimerRequest request) {
 
-        User user = userTestService.getOrCreateTestUser(testUserId);
-
-        int todayTotalExp = calculateTodayTotalExp(testUserId, request.deviceTime());
+        int todayTotalExp = calculateTodayTotalExp(user.getId(), request.deviceTime());
 
         int newExp = calculateExp(request.seconds());
 
@@ -56,9 +54,9 @@ public class TimerService {
         return TimerResponse.of(savedTimer);
     }
 
-    public TimerListResponse getTimerList(Long testUserId) {
+    public TimerListResponse getTimerList(User user) {
 
-        List<Timer> timers = timerRepository.findAllByUser_testUserId(testUserId);
+        List<Timer> timers = timerRepository.findAllByUser_Id(user.getId());
 
         List<TimerResponse> timerResponses = timers.stream()
                 .map(TimerResponse::of)
@@ -77,12 +75,12 @@ public class TimerService {
     }
 
     // 오늘 획득한 총 경험치 계산
-    private int calculateTodayTotalExp(Long testUserId, LocalDateTime deviceTime) {
+    private int calculateTodayTotalExp(Long userId, LocalDateTime deviceTime) {
 
         LocalDateTime startOfDay = deviceTime.toLocalDate().atStartOfDay();  // 오늘 하루(일일)의 기준은 device time으로 00시 00분 자정
 
-        return timerRepository.findAllByUser_testUserIdAndCreatedAtBetween(
-                        testUserId,
+        return timerRepository.findAllByUser_IdAndCreatedAtBetween(
+                        userId,
                         startOfDay,
                         deviceTime
                 ).stream()
