@@ -9,7 +9,7 @@ import com.cmc.mercury.domain.record.entity.Record;
 import com.cmc.mercury.domain.record.entity.RecordDetail;
 import com.cmc.mercury.domain.record.repository.RecordRepository;
 import com.cmc.mercury.domain.user.entity.User;
-import com.cmc.mercury.domain.user.service.UserTestService;
+import com.cmc.mercury.domain.user.service.UserService;
 import com.cmc.mercury.global.exception.CustomException;
 import com.cmc.mercury.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -30,21 +30,19 @@ public class MemoService {
 
     private final MemoRepository memoRepository;
     private final RecordRepository recordRepository;
-    private final UserTestService userTestService;
+    private final UserService userService;
 
     @Transactional
-    public MemoResponse createMemo(Long testUserId, Long recordId, MemoCreateRequest request) {
-
-        User user = userTestService.getOrCreateTestUser(testUserId);
+    public MemoResponse createMemo(User user, Long recordId, MemoCreateRequest request) {
 
         // Record와 RecordDetail을 함께 조회 (Record가 없으면 RecordDetail도 없음)
-        Record record = recordRepository.findByIdAndUser_TestUserId(recordId, testUserId)
+        Record record = recordRepository.findByIdAndUser_Id(recordId, user.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.RECORD_NOT_FOUND));
 
         RecordDetail recordDetail = record.getRecordDetail();
 
         // 메모 추가 경험치 계산
-        int acquiredExp = calculateMemoExp(testUserId, request.deviceTime());
+        int acquiredExp = calculateMemoExp(user.getId(), request.deviceTime());
 
         // Memo 생성 (아직 연관관계 설정 전)
         Memo memo = Memo.builder()
@@ -72,14 +70,14 @@ public class MemoService {
         return MemoResponse.from(savedMemo, recordId);
     }
 
-    private int calculateMemoExp(Long testUserId, LocalDateTime deviceTime) {
+    private int calculateMemoExp(Long userId, LocalDateTime deviceTime) {
 
         LocalDateTime startOfDay = deviceTime.toLocalDate().atStartOfDay();
 
         // 오늘 추가된 메모 수 계산
         int addedMemoCount = memoRepository
-                .countByRecordDetail_Record_User_TestUserIdAndCreatedAtBetweenAndIsFirstMemoFalse(
-                testUserId, startOfDay, deviceTime);
+                .countByRecordDetail_Record_User_IdAndCreatedAtBetweenAndIsFirstMemoFalse(
+                userId, startOfDay, deviceTime);
 
         if (addedMemoCount == 0) {
             return FIRST_EXP;
@@ -94,9 +92,9 @@ public class MemoService {
 
 
     @Transactional
-    public MemoResponse updateMemo(Long testUserId, Long recordId, Long memoId, MemoUpdateRequest request) {
+    public MemoResponse updateMemo(User user, Long recordId, Long memoId, MemoUpdateRequest request) {
 
-        Memo memo = validateAndGetMemo(testUserId, recordId, memoId);
+        Memo memo = validateAndGetMemo(user.getId(), recordId, memoId);
 
         memo.updateContent(request.content());
 
@@ -110,11 +108,9 @@ public class MemoService {
     }
 
     @Transactional
-    public void deleteMemo(Long testUserId, Long recordId, Long memoId) {
+    public void deleteMemo(User user, Long recordId, Long memoId) {
 
-        // User user = userTestService.getOrCreateTestUser(testUserId);
-
-        Memo memo = validateAndGetMemo(testUserId, recordId, memoId);
+        Memo memo = validateAndGetMemo(user.getId(), recordId, memoId);
 
         // 사용자 경험치 차감
         // user.updateExp(user.getExp() - memo.getAcquiredExp());
@@ -124,10 +120,10 @@ public class MemoService {
         memoRepository.delete(memo);
     }
 
-    private Memo validateAndGetMemo(Long testUserId, Long recordId, Long memoId) {
+    private Memo validateAndGetMemo(Long userId, Long recordId, Long memoId) {
 
         // Record와 RecordDetail을 함께 조회 (Record가 없으면 RecordDetail도 없음)
-        Record record = recordRepository.findByIdAndUser_TestUserId(recordId, testUserId)
+        Record record = recordRepository.findByIdAndUser_Id(recordId, userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.RECORD_NOT_FOUND));
 
         RecordDetail recordDetail = record.getRecordDetail();
