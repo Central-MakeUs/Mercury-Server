@@ -35,6 +35,9 @@ dependencies {
 	implementation 'org.json:json:20240303'
 	// webclient
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+	// 소셜로그인
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'com.auth0:java-jwt:4.4.0'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
