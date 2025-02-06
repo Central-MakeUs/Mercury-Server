@@ -81,8 +81,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     String refreshToken = extractRefreshToken(request);
 
                     if (StringUtils.hasText(refreshToken)) {
-                        // Refresh Token 검증
+                        // Refresh Token이 유효한지 검증
                         jwtProvider.validateToken(refreshToken, "RefreshToken");
+                        // Refresh Token이 DB에 저장된 것과 일치하는지 검증
+                        jwtProvider.checkRefreshToken(refreshToken);
 
                         // Refresh Token이 유효하면 새로운 Access Token과 Refresh Token 발급
                         User user = jwtProvider.getUserFromToken(refreshToken);
