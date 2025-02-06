@@ -41,6 +41,7 @@ jobs:
           jwt.refresh-token-validity: ${{ secrets.JWT_REFRESH_VALIDITY }}
           spring.security.oauth2.client.registration.google.client-id: ${{ secrets.OAUTH_GOOGLE_ID }}
           spring.security.oauth2.client.registration.google.client-secret: ${{ secrets.OAUTH_GOOGLE_SECRET }}
+          spring.security.oauth2.client.registration.google.redirect-uri: ${{ secrets.OAUTH_GOOGLE_REDIRECT }}
 
 
       # 실행 속도 향상을 위한 Gradle 종속성 캐싱
