@@ -109,4 +109,23 @@ public class JwtProvider {
 
         return user;
     }
+
+    public void checkRefreshToken(String token) {
+
+        // 기존 Refresh Token이 DB에 저장된 것과 일치하는지 확인
+        User user = getUserFromToken(token);
+
+        String storedRefreshToken = user.getRefreshToken();
+        if (storedRefreshToken == null) {
+            // DB에 Refresh Token이 없는 경우 (이미 무효화된 경우)
+            throw new CustomException(ErrorCode.EXPIRED_REFRESH_TOKEN);
+        }
+
+        if (!token.equals(user.getRefreshToken())) {
+            // DB의 Refresh Token과 일치하지 않으면 재사용 시도로 간주
+            user.updateRefreshToken(null);  // DB의 Refresh Token 무효화
+            userRepository.save(user);
+            throw new CustomException(ErrorCode.EXPIRED_REFRESH_TOKEN);
+        }
+    }
 }
