@@ -36,11 +36,11 @@ jobs:
           aladin.api.ttbkey: ${{ secrets.ALADIN_TTB_KEY }}
           swagger.server.http-url: ${{ secrets.SWAGGER_HTTP_URL }}
           swagger.server.https-url: ${{ secrets.SWAGGER_HTTPS_URL }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          JWT_ACCESS_VALIDITY: ${{ secrets.JWT_ACCESS_VALIDITY }}
-          JWT_REFRESH_VALIDITY: ${{ secrets.JWT_REFRESH_VALIDITY }}
-          OAUTH_GOOGLE_ID: ${{ secrets.OAUTH_GOOGLE_ID }}
-          OAUTH_GOOGLE_SECRET: ${{ secrets.OAUTH_GOOGLE_SECRET }}
+          jwt.secret: ${{ secrets.JWT_SECRET }}
+          jwt.access-token-validity: ${{ secrets.JWT_ACCESS_VALIDITY }}
+          jwt.refresh-token-validity: ${{ secrets.JWT_REFRESH_VALIDITY }}
+          spring.security.oauth2.client.registration.google.client-id: ${{ secrets.OAUTH_GOOGLE_ID }}
+          spring.security.oauth2.client.registration.google.client-secret: ${{ secrets.OAUTH_GOOGLE_SECRET }}
 
 
       # 실행 속도 향상을 위한 Gradle 종속성 캐싱
