@@ -13,32 +13,32 @@ import java.util.Optional;
 @Repository
 public interface RecordRepository extends JpaRepository<Record, Long> {
 
-    Optional<Record> findByIdAndUser_TestUserId(Long recordId, Long testUserId);
+    Optional<Record> findByIdAndUser_Id(Long recordId, Long userId);
 
     // fetch join을 위해 @Query 필요??
-    List<Record> findAllByUser_TestUserIdOrderByCreatedAtDesc(Long testUserId);
+    List<Record> findAllByUser_IdOrderByCreatedAtDesc(Long userId);
 
-    List<Record> findAllByUser_TestUserIdOrderByUpdatedAtDesc(Long testUserId);
+    List<Record> findAllByUser_IdOrderByUpdatedAtDesc(Long userId);
 
     @Query("SELECT DISTINCT r FROM Record r " +
             "LEFT JOIN r.recordDetail rd " +
             "LEFT JOIN rd.memos m " +
-            "WHERE r.user.testUserId = :testUserId " +
+            "WHERE r.user.id = :userId " +
             "AND (LOWER(r.book.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
             "OR LOWER(m.content) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
             "ORDER BY " +
             "CASE WHEN :sortType = 'CREATED' THEN r.createdAt END DESC, " +
             "CASE WHEN :sortType = 'UPDATED' THEN r.updatedAt END DESC")
     List<Record> searchRecordsByTitleOrMemoContent(
-            @Param("testUserId") Long testUserId,
+            @Param("userId") Long userId,
             @Param("keyword") String keyword,
             @Param("sortType") String sortType);
 
-    Optional<Record> findByUser_TestUserIdAndBook_Isbn13(Long testUserId, String isbn13);
+    Optional<Record> findByUser_IdAndBook_Isbn13(Long userId, String isbn13);
 
-    boolean existsByUser_testUserIdAndCreatedAtBetween(
-            Long testUserId, LocalDateTime startOfDay, LocalDateTime deviceTime);
+    boolean existsByUser_IdAndCreatedAtBetween(
+            Long userId, LocalDateTime startOfDay, LocalDateTime deviceTime);
 
-    int countByUser_testUserIdAndCreatedAtBetween(
-            Long testUserId, LocalDateTime startOfDay, LocalDateTime deviceTime);
+    int countByUser_IdAndCreatedAtBetween(
+            Long userId, LocalDateTime startOfDay, LocalDateTime deviceTime);
 }

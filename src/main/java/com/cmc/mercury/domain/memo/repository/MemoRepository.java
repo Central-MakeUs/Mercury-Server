@@ -19,6 +19,6 @@ public interface MemoRepository extends JpaRepository<Memo, Long> {
     // RecordDetail의 모든 Memo들을 찾아서 생성 순으로 정렬 후 반환
     List<Memo> findAllByRecordDetailOrderByCreatedAtDesc(RecordDetail recordDetail);
 
-    int countByRecordDetail_Record_User_TestUserIdAndCreatedAtBetweenAndIsFirstMemoFalse(
-            Long userTestId, LocalDateTime startOfDay, LocalDateTime deviceTime);
+    int countByRecordDetail_Record_User_IdAndCreatedAtBetweenAndIsFirstMemoFalse(
+            Long userId, LocalDateTime startOfDay, LocalDateTime deviceTime);
 }

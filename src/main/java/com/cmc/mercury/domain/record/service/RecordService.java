@@ -10,7 +10,7 @@ import com.cmc.mercury.domain.record.entity.Record;
 import com.cmc.mercury.domain.record.entity.RecordDetail;
 import com.cmc.mercury.domain.record.repository.RecordRepository;
 import com.cmc.mercury.domain.user.entity.User;
-import com.cmc.mercury.domain.user.service.UserTestService;
+import com.cmc.mercury.domain.user.service.UserService;
 import com.cmc.mercury.global.exception.CustomException;
 import com.cmc.mercury.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -34,15 +34,13 @@ public class RecordService {
     private final RecordRepository recordRepository;
     private final BookRepository bookRepository;
     private final MemoRepository memoRepository;
-    private final UserTestService userTestService;
+    private final UserService userService;
 
     @Transactional
-    public RecordResponse createRecord(Long testUserId, RecordRequest request) {
-
-        User user = userTestService.getOrCreateTestUser(testUserId);
+    public RecordResponse createRecord(User user, RecordRequest request) {
 
         // 신규 독서기록 생성 경험치 계산
-        int acquiredExp = calculateRecordExp(testUserId, request.deviceTime());
+        int acquiredExp = calculateRecordExp(user.getId(), request.deviceTime());
 
         // 저장되지 않은 도서면 저장
         Book book = bookRepository.findByIsbn13(request.book().isbn13())
@@ -93,16 +91,16 @@ public class RecordService {
         return RecordResponse.of(savedRecord, savedRecord.getRecordDetail(), memo.getContent());
     }
 
-    private int calculateRecordExp(Long testUserId, LocalDateTime deviceTime) {
+    private int calculateRecordExp(Long userId, LocalDateTime deviceTime) {
 
         LocalDateTime startOfDay = deviceTime.toLocalDate().atStartOfDay();
 
-        boolean isFirstofDay = !recordRepository.existsByUser_testUserIdAndCreatedAtBetween(testUserId, startOfDay, deviceTime);
+        boolean isFirstofDay = !recordRepository.existsByUser_IdAndCreatedAtBetween(userId, startOfDay, deviceTime);
         if (isFirstofDay) {
             return FIRST_EXP;
        }
 
-        int dailyRecordCount = recordRepository.countByUser_testUserIdAndCreatedAtBetween(testUserId, startOfDay, deviceTime);
+        int dailyRecordCount = recordRepository.countByUser_IdAndCreatedAtBetween(userId, startOfDay, deviceTime);
         if (dailyRecordCount >= MAX_DAILY_COUNT) { // 현재 생성하려는 기록 포함 안됨 => 등호 필요
             return 0;
         }
@@ -110,26 +108,26 @@ public class RecordService {
     }
 
 
-    public RecordListResponse getRecordList(Long testUserId, RecordSortType sortType) {
+    public RecordListResponse getRecordList(User user, RecordSortType sortType) {
 
         // 유저의 모든 기록 객체를 정렬해서 조회
         List<Record> records = switch (sortType) {
-            case CREATED -> recordRepository.findAllByUser_TestUserIdOrderByCreatedAtDesc(testUserId);
-            case UPDATED -> recordRepository.findAllByUser_TestUserIdOrderByUpdatedAtDesc(testUserId);
+            case CREATED -> recordRepository.findAllByUser_IdOrderByCreatedAtDesc(user.getId());
+            case UPDATED -> recordRepository.findAllByUser_IdOrderByUpdatedAtDesc(user.getId());
         };
 
         return new RecordListResponse(toRecordResponses(records));
     }
 
-    public RecordListResponse searchRecords(Long testUserId, RecordSortType sortType, String keyword) {
+    public RecordListResponse searchRecords(User user, RecordSortType sortType, String keyword) {
 
         // 검색어가 없으면 전체 목록 조회로 처리
         if (!StringUtils.hasText(keyword)) {
-            return getRecordList(testUserId, sortType);
+            return getRecordList(user, sortType);
         }
 
         List<Record> records = recordRepository.searchRecordsByTitleOrMemoContent(
-                testUserId,
+                user.getId(),
                 keyword,
                 sortType.name()
         );
@@ -138,11 +136,9 @@ public class RecordService {
     }
 
     @Transactional
-    public void deleteRecord(Long testUserId, Long recordId) {
+    public void deleteRecord(User user, Long recordId) {
 
-        User user = userTestService.getOrCreateTestUser(testUserId);
-
-        Record record = recordRepository.findByIdAndUser_TestUserId(recordId, testUserId)
+        Record record = recordRepository.findByIdAndUser_Id(recordId, user.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.RESOURCE_NOT_FOUND));
 
         // 차감할 경험치 계산
@@ -156,10 +152,10 @@ public class RecordService {
         recordRepository.delete(record);
     }
 
-    public RecordDetailResponse getRecordDetail(Long testUserId, Long recordId) {
+    public RecordDetailResponse getRecordDetail(User user, Long recordId) {
 
         // 기록 객체 조회
-        Record record = recordRepository.findByIdAndUser_TestUserId(recordId, testUserId)
+        Record record = recordRepository.findByIdAndUser_Id(recordId, user.getId())
                 .orElseThrow(() -> new CustomException(ErrorCode.RECORD_NOT_FOUND));
 
         // 기록 상세 조회
