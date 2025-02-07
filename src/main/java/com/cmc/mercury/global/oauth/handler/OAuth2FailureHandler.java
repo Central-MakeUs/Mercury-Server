@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
@@ -16,9 +17,13 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
+
         log.error("Social Login Failed: {}", exception.getMessage());
 
-        // 실패 시 테스트용 페이지로 리다이렉트
-        getRedirectStrategy().sendRedirect(request, response, "/login/fail");
+        String targetUrl = UriComponentsBuilder.fromUriString("/login/fail")
+                .queryParam("redirect_url", "https://www.mercuryplanet.co.kr/")
+                .build().toUriString();
+
+        getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 }
