@@ -60,6 +60,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 리다이렉트 URL에 토큰 포함하여 이동
         String targetUrl = UriComponentsBuilder.fromUriString("/login/success")
                 .queryParam("access_token", accessToken)
+                .queryParam("redirect_url", "https://www.mercuryplanet.co.kr/home")
                 .build().toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
