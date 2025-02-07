@@ -22,7 +22,7 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
 
         String targetUrl = UriComponentsBuilder.fromUriString("/login/fail")
                 .queryParam("redirect_url", "https://www.mercuryplanet.co.kr/")
-                .build().toUriString();
+                .build(true).toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
