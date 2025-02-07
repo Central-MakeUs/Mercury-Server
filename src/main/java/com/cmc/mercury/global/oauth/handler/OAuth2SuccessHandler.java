@@ -61,7 +61,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String targetUrl = UriComponentsBuilder.fromUriString("/login/success")
                 .queryParam("access_token", accessToken)
                 .queryParam("redirect_url", "https://www.mercuryplanet.co.kr/home")
-                .build().toUriString();
+                .build(true).toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
