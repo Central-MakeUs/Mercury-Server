@@ -27,6 +27,7 @@ public enum ErrorCode {
 
     // User
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User404", "사용자를 찾을 수 없습니다."),
+    DUPLICATE_USER(HttpStatus.CONFLICT, "User409", "이미 존재하는 사용자입니다."),
 
     // Book
     BOOK_NOT_FOUND(HttpStatus.NOT_FOUND, "Book404", "도서를 찾을 수 없습니다."),
