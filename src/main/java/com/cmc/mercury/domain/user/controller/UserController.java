@@ -36,6 +36,12 @@ public class UserController {
         return SuccessResponse.ok(new HashMap<>());
     }
 
+    @PostMapping("/refresh/accessToken")
+    @Operation(summary = "테스트 계정 토큰 재발급", description = "개발 환경에서 사용할 테스트 계정의 새로운 access 토큰을 발급합니다.")
+    public SuccessResponse<User> refreshTestToken(@RequestBody UserTestRequest request) {
+        return SuccessResponse.ok(userService.refreshTestToken(request));
+    }
+
     @GetMapping()
     public SuccessResponse<List<User>> getAllUsers() {
 

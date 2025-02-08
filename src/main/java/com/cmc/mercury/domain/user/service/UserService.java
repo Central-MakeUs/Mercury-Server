@@ -64,6 +64,24 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    @Transactional
+    public User refreshTestToken(UserTestRequest request) {
+
+        // 해당 이메일의 TEST 계정 찾기
+        User user = userRepository.findByEmailAndOauthType(request.email(), OAuthType.TEST)
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        // 토큰 재발급
+        long tokenValidity = request.isShortLivedAccessToken()
+                ? 20000  // 20초
+                : accessTokenValidity;
+
+        String accessToken = jwtProvider.createToken(user.getId(), user.getEmail(), "AccessToken", tokenValidity);
+        response.setHeader("Authorization", "Bearer " + accessToken);
+
+        return user;
+    }
+
     public List<User> getListUsers() {
         return userRepository.findAll();
     }
