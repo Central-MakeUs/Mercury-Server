@@ -11,6 +11,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +19,14 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     @Value("${jwt.access-token-validity}")
     private long accessTokenValidity;
+
+    @Value("${jwt.refresh-token-validity}")
+    private long refreshTokenValidity;
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
@@ -41,16 +46,7 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        // isShortLivedAccessToken 옵션에 따라 유효기간 선택
-        long tokenValidity = request.isShortLivedAccessToken()
-                ? 20000 // 20초
-                : accessTokenValidity;
-
-        // access token만 발급
-        String accessToken = jwtProvider.createToken(user.getId(), user.getEmail(), "AccessToken", tokenValidity);
-
-        // 헤더에 access token 설정
-        response.setHeader("Authorization", "Bearer " + accessToken);
+        setTestUserTokens(savedUser, request.isShortLivedAccessToken());
 
         return savedUser;
     }
@@ -71,18 +67,34 @@ public class UserService {
         User user = userRepository.findByEmailAndOauthType(request.email(), OAuthType.TEST)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        // 토큰 재발급
-        long tokenValidity = request.isShortLivedAccessToken()
-                ? 20000  // 20초
-                : accessTokenValidity;
-
-        String accessToken = jwtProvider.createToken(user.getId(), user.getEmail(), "AccessToken", tokenValidity);
-        response.setHeader("Authorization", "Bearer " + accessToken);
+        setTestUserTokens(user, request.isShortLivedAccessToken());
 
         return user;
     }
 
-    public List<User> getListUsers() {
+    private void setTestUserTokens(User user, boolean isShortLivedAccessToken) {
+        // Access Token 생성
+        long tokenValidity = isShortLivedAccessToken
+                ? 20000  // 20초
+                : accessTokenValidity;
+
+        String accessToken = jwtProvider.createToken(user.getId(), user.getEmail(), "AccessToken", tokenValidity);
+        String refreshToken = jwtProvider.createRefreshToken(user.getId(), user.getEmail());
+
+        // 토큰 설정
+        response.setHeader("Authorization", "Bearer " + accessToken);
+
+        // Refresh Token 쿠키 설정
+        Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        // refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setPath("/");
+        // refreshTokenCookie.setDomain("mercuryplanet.co.kr");
+        refreshTokenCookie.setMaxAge((int) refreshTokenValidity / 1000);
+        response.addCookie(refreshTokenCookie);
+    }
+
+        public List<User> getListUsers() {
         return userRepository.findAll();
     }
 }
