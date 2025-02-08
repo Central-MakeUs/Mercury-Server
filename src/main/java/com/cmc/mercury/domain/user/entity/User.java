@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -57,14 +59,16 @@ public class User extends BaseEntity {
         this.exp = 0; // 초기 경험치는 0
     }
 
-    // 테스트용 생성자
-//    @Builder(builderMethodName = "testUserBuilder", buildMethodName = "testUserBuild")
-//    public User(Long testUserId) {
-//        this.testUserId = testUserId;
-//        this.nickname = "TestUser_" + testUserId;
-//        this.email = "test" + testUserId + "@test.com";
-//        this.exp = 0;  // 초기 경험치는 0
-//    }
+    // 게스트용 생성자
+    @Builder(builderMethodName = "TestUserBuilder", buildMethodName = "TestUserBuild")
+    public User(String email) {
+        this.email = email;
+        this.nickname = "TestUser";
+        this.oauthType = OAuthType.TEST;
+        this.oauthId = UUID.randomUUID().toString();;
+        this.userStatus = UserStatus.ACTIVE;
+        this.exp = 0;  // 초기 경험치는 0
+    }
 
     public void updateExp(int exp) {
         this.exp = exp;
