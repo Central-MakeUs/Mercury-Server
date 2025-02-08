@@ -45,7 +45,7 @@ public class JwtProvider {
         return refreshToken;
     }
 
-    private String createToken(Long userId, String email, String tokenType, long validityInMilliseconds) {
+    public String createToken(Long userId, String email, String tokenType, long validityInMilliseconds) {
         Algorithm algorithm = Algorithm.HMAC256(jwtSecret);
         Date now = new Date();
         Date expiresAt = new Date(now.getTime() + validityInMilliseconds);

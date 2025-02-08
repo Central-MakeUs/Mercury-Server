@@ -7,7 +7,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -33,9 +33,9 @@ jwt:
   refresh-token-validity: ${JWT_REFRESH_VALIDITY}
 
 logging.level:
-    org.hibernate:
-        SQL: DEBUG
-        type: trace
+  org.hibernate:
+    SQL: DEBUG
+    type: trace
 
 # swagger 관련 설정
 springdoc:
@@ -59,12 +59,12 @@ springdoc:
 # swagger 서버 분리
 swagger:
   server:
-    http-url: ${SWAGGER_HTTP_URL}
-    https-url: ${SWAGGER_HTTPS_URL}
+    http-url: ${SERVER_HTTP_URL}
+    https-url: ${SERVER_HTTPS_URL}
 
 # 알라딘 Open API 상품 검색 관련 설정
 aladin:
   api:
     url: https://www.aladin.co.kr/ttb/api/ItemSearch.aspx?QueryType=Keyword&SearchTarget=All&Cover=Big&Output=JS
-        # 검색어 종류: 제목+저자, 검색 대상: 전체, 표지 이미지 크기: 가장 큰 크기, 출력방법: JSON
+    # 검색어 종류: 제목+저자, 검색 대상: 전체, 표지 이미지 크기: 가장 큰 크기, 출력방법: JSON
     ttbkey: ${ALADIN_TTB_KEY}
