@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/timers")
+@RequestMapping("/api/timers")
 @RequiredArgsConstructor
 @Tag(name = "TimerController", description = "타이머 관련 API")
 public class TimerController {

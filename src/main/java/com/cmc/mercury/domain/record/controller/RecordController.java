@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 
 @RestController
-@RequestMapping("/records")
+@RequestMapping("/api/records")
 @RequiredArgsConstructor
 @Tag(name = "RecordController", description = "도서 기록 관련 API")
 public class RecordController {
