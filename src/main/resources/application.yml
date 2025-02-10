@@ -58,7 +58,7 @@ logging.level:
   org.hibernate:
     SQL: DEBUG
     type: trace
-  org.springframework.security: DEBUG
+  org.springframework.security: INFO
   com.cmc.mercury: DEBUG
 
 # swagger 관련 설정
