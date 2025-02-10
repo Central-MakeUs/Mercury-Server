@@ -20,8 +20,7 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
 
         log.error("Social Login Failed: {}", exception.getMessage());
 
-        String targetUrl = UriComponentsBuilder.fromUriString("/login/fail")
-                .queryParam("redirect_url", "https://www.mercuryplanet.co.kr/")
+        String targetUrl = UriComponentsBuilder.fromUriString("https://www.mercuryplanet.co.kr/login/fail")
                 .build(true).toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);

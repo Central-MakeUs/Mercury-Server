@@ -44,23 +44,24 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // JWT 토큰 생성
         String accessToken = jwtProvider.createAccessToken(user.getId(), user.getEmail());
         String refreshToken = jwtProvider.createRefreshToken(user.getId(), user.getEmail());
+        log.info("accessToken, refreshToken: {}, {}", accessToken, refreshToken);
 
         // Access Token은 Authorization 헤더에 추가
         response.setHeader("Authorization", "Bearer " + accessToken);
+        log.info("Header에 설정은 성공");
 
         // Refresh Token은 보안을 위해 HttpOnly 쿠키로 설정
         Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
         refreshTokenCookie.setHttpOnly(true); // JavaScript에서 접근 방지
-        refreshTokenCookie.setSecure(true); // HTTPS만 허용
+        // refreshTokenCookie.setSecure(true); // HTTPS만 허용
         refreshTokenCookie.setPath("/"); // 모든 경로에서 접근 가능
-        refreshTokenCookie.setDomain("mercuryplanet.co.kr");  // 도메인 간 쿠키 공유
+        // refreshTokenCookie.setDomain("mercuryplanet.co.kr");  // 도메인 간 쿠키 공유
         refreshTokenCookie.setMaxAge((int) refreshTokenValidity / 1000); // ms를 초 단위로 변환
         response.addCookie(refreshTokenCookie);
 
         // 리다이렉트 URL에 토큰 포함하여 이동
-        String targetUrl = UriComponentsBuilder.fromUriString("/login/success")
+        String targetUrl = UriComponentsBuilder.fromUriString("https://www.mercuryplanet.co.kr/login/success")
                 .queryParam("access_token", accessToken)
-                .queryParam("redirect_url", "https://www.mercuryplanet.co.kr/home")
                 .build(true).toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
