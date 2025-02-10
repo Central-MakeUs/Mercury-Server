@@ -42,6 +42,13 @@ jobs:
           spring.security.oauth2.client.registration.google.client-id: ${{ secrets.OAUTH_GOOGLE_ID }}
           spring.security.oauth2.client.registration.google.client-secret: ${{ secrets.OAUTH_GOOGLE_SECRET }}
           spring.security.oauth2.client.registration.google.redirect-uri: ${{ secrets.SERVER_HTTPS_URL }}/login/oauth2/code/google
+          spring.security.oauth2.client.registration.apple.client-id: ${{ secrets.OAUTH_APPLE_CID }}
+          spring.security.oauth2.client.registration.apple.client-secret: ${{ secrets.OAUTH_APPLE_P8 }}
+          spring.security.oauth2.client.registration.apple.redirect-uri: ${{ secrets.SERVER_HTTPS_URL }}/login/oauth2/code/apple
+          apple.key-content: ${{ secrets.OAUTH_APPLE_P8_KEY_CONTENT }}
+          apple.cid: ${{ secrets.OAUTH_APPLE_CID }}
+          apple.tid: ${{ secrets.OAUTH_APPLE_TID }}
+          apple.kid: ${{ secrets.OAUTH_APPLE_KID }}
 
 
       # 실행 속도 향상을 위한 Gradle 종속성 캐싱

@@ -26,6 +26,28 @@ spring:
             scope:
               - email
               - profile
+          apple:
+            client-id: ${OAUTH_APPLE_CID} # Service ID의 identifier
+            client-secret: ${OAUTH_APPLE_P8} # private key 파일 이름
+            redirect-uri: ${OAUTH_APPLE_REDIRECT}
+            client-authentication-method: POST
+            authorization-grant-type: authorization_code
+            client-name: Apple
+            scope:
+              - name
+              - email
+        provider:
+          apple:
+            authorization-uri: https://appleid.apple.com/auth/authorize?response_mode=form_post
+            token-uri: https://appleid.apple.com/auth/token
+
+apple:
+  url: https://appleid.apple.com
+  # key-path: ${OAUTH_APPLE_P8}
+  key-content: ${OAUTH_APPLE_P8_KEY_CONTENT}
+  cid: ${OAUTH_APPLE_CID}
+  tid: ${OAUTH_APPLE_TID}
+  kid: ${OAUTH_APPLE_KID}
 
 jwt:
   secret: ${JWT_SECRET}
@@ -36,6 +58,8 @@ logging.level:
   org.hibernate:
     SQL: DEBUG
     type: trace
+  org.springframework.security: DEBUG
+  com.cmc.mercury: DEBUG
 
 # swagger 관련 설정
 springdoc:

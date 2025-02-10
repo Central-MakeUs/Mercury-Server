@@ -38,6 +38,11 @@ dependencies {
 	// 소셜로그인
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'com.auth0:java-jwt:4.4.0'
+	implementation 'org.bouncycastle:bcpkix-jdk18on:1.77'
+	implementation 'org.bouncycastle:bcprov-jdk18on:1.77'
+	// implementation 'commons-io:commons-io:2.14.0' // IOUtils 사용을 위해
+	// implementation 'com.nimbusds:nimbus-jose-jwt:9.31'
+	implementation 'com.auth0:jwks-rsa:0.20.2'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'

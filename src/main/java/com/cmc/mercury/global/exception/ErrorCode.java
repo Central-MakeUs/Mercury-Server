@@ -53,6 +53,11 @@ public enum ErrorCode {
     OAUTH2_PROCESSING_ERROR(HttpStatus.UNAUTHORIZED, "OAuth401", "소셜 로그인 처리 중 오류가 발생했습니다."),
     OAUTH2_LOGIN_FAIL(HttpStatus.UNAUTHORIZED, "OAuth401", "소셜 로그인에 실패했습니다."),
 
+    // Apple
+    APPLE_CLIENT_SECRET_ERROR(HttpStatus.BAD_REQUEST, "Apple400", "Apple client secret 생성 실패"),
+    APPLE_PRIVATE_KEY_ERROR(HttpStatus.BAD_REQUEST, "Apple400", "Apple private key 생성 실패"),
+    APPLE_TOKEN_VALIDATION_ERROR(HttpStatus.UNAUTHORIZED, "Apple401", "Apple ID 토큰 검증 실패"),
+
     // JWT
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Jwt401", "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "Jwt401", "만료된 토큰입니다."),
