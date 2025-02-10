@@ -41,6 +41,7 @@ jobs:
           jwt.refresh-token-validity: ${{ secrets.JWT_REFRESH_VALIDITY }}
           spring.security.oauth2.client.registration.google.client-id: ${{ secrets.OAUTH_GOOGLE_ID }}
           spring.security.oauth2.client.registration.google.client-secret: ${{ secrets.OAUTH_GOOGLE_SECRET }}
+          spring.security.oauth2.client.registration.google.redirect-uri: ${{ secrets.SERVER_HTTPS_URL }}/login/oauth2/code/google
           spring.security.oauth2.client.registration.apple.client-id: ${{ secrets.OAUTH_APPLE_CID }}
           spring.security.oauth2.client.registration.apple.client-secret: ${{ secrets.OAUTH_APPLE_P8 }}
           spring.security.oauth2.client.registration.apple.redirect-uri: ${{ secrets.SERVER_HTTPS_URL }}/login/oauth2/code/apple
