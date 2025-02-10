@@ -63,8 +63,8 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/api-docs/**", "/swagger-resources/**").permitAll()
                         // OAuth2 관련 경로 허용
                         .requestMatchers("/login/**", "/oauth2/**").permitAll()
-                        // 도서 검색, 사용자 api
-                        .requestMatchers("/books/search", "/users/**").permitAll()
+                        // 도서 검색, 사용자 api, health check
+                        .requestMatchers("/api/books/search", "/api/users/**", "/api/health").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
