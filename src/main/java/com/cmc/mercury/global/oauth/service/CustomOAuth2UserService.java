@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -94,12 +95,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             String oauthId = oAuth2UserInfo.getOAuthId();
             OAuthType oAuthType = oAuth2UserInfo.getOAuthType();
 
-            User user = userRepository.findByOauthTypeAndOauthId(oAuthType, oauthId)
-                    .orElseGet(() -> {
-                        log.info("새로운 사용자 생성 시도");
-                        return createUser(oAuth2UserInfo);
-                    });
+            Optional<User> existingUser = userRepository.findByOauthTypeAndOauthId(oAuthType, oauthId);
+            boolean isNewUser = existingUser.isEmpty(); // 존재하지 않으면 회원가입
+
+            User user = existingUser.orElseGet(() -> {
+                log.info("새로운 사용자 생성 시도");
+                return createUser(oAuth2UserInfo);
+            });
             log.info("사용자 조회/생성 완료: userId={}", user.getId());
+
+            // 회원가입 여부를 Security Context에 저장 (OAuth2User에 포함)
+            Map<String, Object> userAttributes = new HashMap<>(oAuth2User.getAttributes());
+            userAttributes.put("isNewUser", isNewUser);
 
             // 인증 객체 생성 (Security Context에 저장될 인증 정보)
             // 반환된 DefaultOAuth2User는 나중에 @AuthenticationPrincipal로 받아서 필요한 정보를 꺼내 쓸 수 있음

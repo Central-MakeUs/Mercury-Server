@@ -36,6 +36,8 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                                         Authentication authentication) throws IOException {
         log.info("OAuth2 Login 성공!");
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        // 인증이 완료된 후 새로운 요청이 발생하면 request에 저장된 데이터(isNewUser). 는 사라짐
+        boolean isNewUser = (boolean) oAuth2User.getAttributes().getOrDefault("isNewUser", false);
 
         // oauthId로 사용자 조회
         User user = userRepository.findByOauthId(oAuth2User.getName())
@@ -62,6 +64,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 리다이렉트 URL에 토큰 포함하여 이동
         String targetUrl = UriComponentsBuilder.fromUriString("https://www.mercuryplanet.co.kr/login/success")
                 .queryParam("access_token", accessToken)
+                .queryParam("isNewUser", isNewUser)
                 .build(true).toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
