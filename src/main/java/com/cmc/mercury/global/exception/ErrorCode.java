@@ -62,6 +62,7 @@ public enum ErrorCode {
     // JWT
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Jwt401", "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "Jwt401", "만료된 토큰입니다."),
+    EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "Jwt401", "만료된 access 토큰입니다."),
     EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "Jwt401", "만료된 refresh 토큰입니다."),
     TOKEN_TYPE_MISMATCH(HttpStatus.UNAUTHORIZED, "Jwt401", "토큰 타입이 일치하지 않습니다."),
     EMPTY_TOKEN(HttpStatus.UNAUTHORIZED, "Jwt401", "토큰이 없습니다.");

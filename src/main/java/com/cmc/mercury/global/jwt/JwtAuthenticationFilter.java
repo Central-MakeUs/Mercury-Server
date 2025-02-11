@@ -78,7 +78,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             } catch (CustomException e) {
                 // Access Token이 만료된 경우, Refresh Token 확인
-                if (e.getErrorCode() == ErrorCode.EXPIRED_TOKEN) {
+                if (e.getErrorCode() == ErrorCode.EXPIRED_ACCESS_TOKEN) {
                     String refreshToken = extractRefreshToken(request);
 
                     if (StringUtils.hasText(refreshToken)) {

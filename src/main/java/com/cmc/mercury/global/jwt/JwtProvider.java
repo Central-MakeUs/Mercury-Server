@@ -79,8 +79,13 @@ public class JwtProvider {
             verifier.verify(token);
 
         } catch (TokenExpiredException e) {
-            // 토큰이 만료된 경우
-            throw new CustomException(ErrorCode.EXPIRED_TOKEN);
+            // 토큰이 만료된 경우: Access Token과 Refresh Token을 구분하여 만료 예외 던지기
+            if ("AccessToken".equals(expectedType)) {
+                throw new CustomException(ErrorCode.EXPIRED_ACCESS_TOKEN);
+
+            } else {
+                throw new CustomException(ErrorCode.EXPIRED_REFRESH_TOKEN);
+            }
 
         } catch (SignatureVerificationException | JWTDecodeException e) {
             // 서명이 유효하지 않거나 토큰 형식이 잘못된 경우
