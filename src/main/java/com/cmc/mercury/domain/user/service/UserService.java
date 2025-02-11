@@ -94,7 +94,8 @@ public class UserService {
         response.addCookie(refreshTokenCookie);
     }
 
-        public List<User> getListUsers() {
+    public List<User> getListUsers() {
+
         return userRepository.findAll();
     }
 }
