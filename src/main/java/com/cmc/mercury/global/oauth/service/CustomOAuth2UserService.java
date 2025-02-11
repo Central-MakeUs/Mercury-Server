@@ -112,7 +112,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             // 반환된 DefaultOAuth2User는 나중에 @AuthenticationPrincipal로 받아서 필요한 정보를 꺼내 쓸 수 있음
             return new DefaultOAuth2User(
                     Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
-                    oAuth2User.getAttributes(),
+                    userAttributes, // 기존 attributes 대신 isNewUser 포함된 attributes
                     userNameAttributeName);
 
         } catch (Exception e) {
