@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 
@@ -121,16 +122,40 @@ public class JwtProvider {
         User user = getUserFromToken(token);
 
         String storedRefreshToken = user.getRefreshToken();
-        if (storedRefreshToken == null) {
-            // DB에 Refresh Token이 없는 경우 (이미 무효화된 경우)
-            throw new CustomException(ErrorCode.EXPIRED_REFRESH_TOKEN);
+           if (storedRefreshToken == null) {
+            // 사용자가 로그아웃한 경우
+            throw new CustomException(ErrorCode.EMPTY_REFRESH_TOKEN);
         }
 
-        if (!token.equals(user.getRefreshToken())) {
+/*        if (!token.equals(user.getRefreshToken())) {
             // DB의 Refresh Token과 일치하지 않으면 재사용 시도로 간주
             user.updateRefreshToken(null);  // DB의 Refresh Token 무효화
             userRepository.save(user);
             throw new CustomException(ErrorCode.EXPIRED_REFRESH_TOKEN);
+        }*/
+        if (!token.equals(storedRefreshToken)) {
+            throw new CustomException(ErrorCode.EXPIRED_REFRESH_TOKEN);
         }
+    }
+
+    public String refreshToken(String refreshToken) {
+
+        // Refresh Token이 없음
+        if (!StringUtils.hasText(refreshToken)) {
+            throw new CustomException(ErrorCode.EMPTY_REFRESH_TOKEN);
+        }
+
+        // Refresh Token 검증
+        validateToken(refreshToken, "RefreshToken");
+        // DB에 저장된 Refresh Token과 비교하여 유효성 확인
+        checkRefreshToken(refreshToken);
+
+        // Refresh Token이 유효하면 새로운 Refresh Token 발급
+        User user = getUserFromToken(refreshToken);
+        String newRefreshToken = createRefreshToken(user.getId(), user.getEmail());
+        // 새 Refresh Token을 DB에 저장
+        updateRefreshToken(user.getId(), newRefreshToken);
+
+        return newRefreshToken;
     }
 }

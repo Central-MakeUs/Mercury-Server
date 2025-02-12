@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -47,7 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 path.startsWith("/api-docs") ||
                 path.startsWith("/api/books/search") ||
                 path.startsWith("/api/users") ||
-                path.startsWith("/api/health");
+                path.startsWith("/api/health") ||
+                path.startsWith("/api/auth/refresh");
     }
 
     @Override
@@ -60,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // Access Token이 없음
             if (!StringUtils.hasText(accessToken)) {
-                throw new CustomException(ErrorCode.EMPTY_TOKEN);
+                throw new CustomException(ErrorCode.EMPTY_ACCESS_TOKEN);
             }
 
             try {
@@ -76,48 +78,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 filterChain.doFilter(request, response);
 
+                return;
+
             } catch (CustomException e) {
-                // Access Token이 만료된 경우, Refresh Token 확인
+                // Access Token이 만료된 경우, 바로 에러 반환
                 if (e.getErrorCode() == ErrorCode.EXPIRED_ACCESS_TOKEN) {
-                    String refreshToken = extractRefreshToken(request);
 
-                    if (StringUtils.hasText(refreshToken)) {
-                        // Refresh Token이 유효한지 검증
-                        jwtProvider.validateToken(refreshToken, "RefreshToken");
-                        // Refresh Token이 DB에 저장된 것과 일치하는지 검증
-                        jwtProvider.checkRefreshToken(refreshToken);
+                    response.setStatus(e.getErrorCode().getHttpStatus().value());
+                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    response.setCharacterEncoding("UTF-8");
 
-                        // Refresh Token이 유효하면 새로운 Access Token과 Refresh Token 발급
-                        User user = jwtProvider.getUserFromToken(refreshToken);
-                        String newAccessToken = jwtProvider.createAccessToken(user.getId(), user.getEmail());
-                        String newRefreshToken = jwtProvider.createRefreshToken(user.getId(), user.getEmail());
+                    ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode());
 
-                        // 새로운 Access Token을 헤더에 추가
-                        response.setHeader("Authorization", "Bearer " + newAccessToken);
+                    response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
 
-                        // 새로운 Refresh Token을 쿠키에 설정
-                        Cookie refreshTokenCookie = new Cookie("refresh_token", newRefreshToken);
-                        refreshTokenCookie.setHttpOnly(true); // JavaScript에서 접근 방지
-                        // refreshTokenCookie.setSecure(true); // HTTPS만 허용
-                        refreshTokenCookie.setPath("/"); // 모든 경로에서 접근 가능
-                        // refreshTokenCookie.setDomain("mercuryplanet.co.kr");  // 도메인 간 쿠키 공유
-                        refreshTokenCookie.setMaxAge((int) refreshTokenValidity / 1000); // ms를 초 단위로 변환
-                        response.addCookie(refreshTokenCookie);
-
-                        // Authentication 객체 생성해서 SecurityContext에 저장
-                        Authentication authentication = createAuthentication(user);
-                        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                        filterChain.doFilter(request, response);
-
-                        return;
-                    }
+                    return;
                 }
-                // 그 외 토큰 관련 에러
-                throw new CustomException(e.getErrorCode());
+                // 그 외 토큰 관련 에러 그대로 던짐
+                throw e;
             }
         } catch (CustomException e) {
-            SecurityContextHolder.clearContext();
+            SecurityContextHolder.clearContext(); // 최종적으로 인증이 실패한 경우 초기화
 
             response.setStatus(e.getErrorCode().getHttpStatus().value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);

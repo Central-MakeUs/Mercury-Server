@@ -66,6 +66,8 @@ public class SecurityConfig {
                         .requestMatchers("/login/**", "/oauth2/**").permitAll()
                         // 도서 검색, 사용자 api, health check
                         .requestMatchers("/api/books/search", "/api/users/**", "/api/health").permitAll()
+                        // access token 없어도 호출 가능해야 함
+                        .requestMatchers("/api/auth/refresh").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
