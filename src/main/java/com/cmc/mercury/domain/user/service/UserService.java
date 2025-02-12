@@ -36,15 +36,24 @@ public class UserService {
     public User createTestUser(UserTestRequest request) {
 
         // 이메일과 OAuthType으로 중복 검증
-        if (userRepository.existsByEmailAndOauthType(request.email(), OAuthType.TEST)) {
+/*        if (userRepository.existsByEmailAndOauthType(request.email(), OAuthType.TEST)) {
             throw new CustomException(ErrorCode.DUPLICATE_USER);
+        }*/
+        User existingUser = userRepository.findByEmailAndOauthType(request.email(), OAuthType.TEST)
+                .orElse(null);
+
+
+        if (existingUser != null) {
+            // 기존 유저가 있으면 로그인 처리 (토큰 갱신)
+            setTestUserTokens(existingUser, request.isShortLivedAccessToken());
+            return existingUser;
         }
 
-        User user = User.TestUserBuilder()
+        User newUser = User.TestUserBuilder()
                         .email(request.email())
                         .TestUserBuild();
 
-        User savedUser = userRepository.save(user);
+        User savedUser = userRepository.save(newUser);
 
         setTestUserTokens(savedUser, request.isShortLivedAccessToken());
 
