@@ -52,9 +52,10 @@ public class AuthController {
         // 새로운 Refresh Token을 쿠키에 설정
         Cookie refreshTokenCookie = new Cookie("refresh_token", newRefreshToken);
         refreshTokenCookie.setHttpOnly(true); // JavaScript에서 접근 방지
-        // refreshTokenCookie.setSecure(true); // HTTPS만 허용
+        refreshTokenCookie.setSecure(true); // HTTPS만 허용
         refreshTokenCookie.setPath("/"); // 모든 경로에서 접근 가능
-        // refreshTokenCookie.setDomain("mercuryplanet.co.kr");  // 도메인 간 쿠키 공유
+        refreshTokenCookie.setDomain("mercuryplanet.co.kr");  // 도메인 간 쿠키 공유
+        refreshTokenCookie.setAttribute("SameSite", "None");
         refreshTokenCookie.setMaxAge((int) refreshTokenValidity / 1000); // ms를 초 단위로 변환
         response.addCookie(refreshTokenCookie);
 

@@ -96,9 +96,10 @@ public class UserService {
         // Refresh Token 쿠키 설정
         Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
-        // refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setSecure(true);
         refreshTokenCookie.setPath("/");
-        // refreshTokenCookie.setDomain("mercuryplanet.co.kr");
+        refreshTokenCookie.setDomain("mercuryplanet.co.kr");
+        refreshTokenCookie.setAttribute("SameSite", "None");
         refreshTokenCookie.setMaxAge((int) refreshTokenValidity / 1000);
         response.addCookie(refreshTokenCookie);
     }
