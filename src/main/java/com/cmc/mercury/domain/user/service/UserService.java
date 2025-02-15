@@ -8,12 +8,14 @@ import com.cmc.mercury.global.exception.CustomException;
 import com.cmc.mercury.global.exception.ErrorCode;
 import com.cmc.mercury.global.jwt.JwtProvider;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -104,8 +106,12 @@ public class UserService {
         response.addCookie(refreshTokenCookie);
     }
 
-    public List<User> getListUsers() {
+    public User getUser(String accessToken) {
 
-        return userRepository.findAll();
+        // Access Token 검증
+        jwtProvider.validateToken(accessToken, "AccessToken");
+
+        // 유효성 검증이 완료된 토큰에서 user 추출
+        return jwtProvider.getUserFromToken(accessToken);
     }
 }
