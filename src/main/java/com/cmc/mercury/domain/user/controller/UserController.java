@@ -3,15 +3,17 @@ package com.cmc.mercury.domain.user.controller;
 import com.cmc.mercury.domain.user.entity.User;
 import com.cmc.mercury.domain.user.response.UserTestRequest;
 import com.cmc.mercury.domain.user.service.UserService;
+import com.cmc.mercury.global.exception.CustomException;
+import com.cmc.mercury.global.exception.ErrorCode;
 import com.cmc.mercury.global.response.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -43,10 +45,20 @@ public class UserController {
         return SuccessResponse.ok(userService.refreshTestToken(request));
     }
 
-    @GetMapping
-    @Operation(summary = "사용자 리스트 조회", description = "모든 사용자의 정보를 조회합니다.")
-    public SuccessResponse<List<User>> getAllUsers() {
+    @GetMapping("/me")
+    @Operation(summary = "사용자 조회", description = "access token으로 사용자의 정보를 조회합니다.")
+    public SuccessResponse<User> getUserInfo(@RequestHeader("Authorization") String authorizationHeader) {
 
-        return SuccessResponse.ok(userService.getListUsers());
+        if (!StringUtils.hasText(authorizationHeader)) {
+            throw new CustomException(ErrorCode.EMPTY_ACCESS_TOKEN);
+        }
+
+        // Bearer prefix 제거
+        String accessToken = authorizationHeader;
+        if (accessToken.startsWith("Bearer ")) {
+            accessToken = accessToken.substring(7);
+        }
+
+        return SuccessResponse.ok(userService.getUser(accessToken));
     }
 }
