@@ -49,6 +49,9 @@ jobs:
           apple.cid: ${{ secrets.OAUTH_APPLE_CID }}
           apple.tid: ${{ secrets.OAUTH_APPLE_TID }}
           apple.kid: ${{ secrets.OAUTH_APPLE_KID }}
+          spring.security.oauth2.client.registration.kakao.client-id: ${{ secrets.OAUTH_KAKAO_ID }}
+          spring.security.oauth2.client.registration.kakao.client-secret: ${{ secrets.OAUTH_KAKAO_SECRET }}
+          spring.security.oauth2.client.registration.kakao.redirect-uri: ${{ secrets.SERVER_HTTPS_URL }}/login/oauth2/code/kakao
 
 
       # 실행 속도 향상을 위한 Gradle 종속성 캐싱
