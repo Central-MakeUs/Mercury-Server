@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOriginPatterns("*")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .exposedHeaders("Authorization")  // Authorization 헤더 노출
+                .exposedHeaders("Authorization", "Refresh-Token")  // Authorization, refresh token 헤더 노출
                 .allowCredentials(true)  // 쿠키 허용을 위해 필요
                 .maxAge(3600);
     }
