@@ -52,19 +52,24 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.setHeader("Authorization", "Bearer " + accessToken);
         log.info("Header에 설정은 성공");
 
-        // Refresh Token은 보안을 위해 HttpOnly 쿠키로 설정
-        Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
-        refreshTokenCookie.setHttpOnly(true); // JavaScript에서 접근 방지
-        refreshTokenCookie.setSecure(true); // HTTPS만 허용
-        refreshTokenCookie.setPath("/"); // 모든 경로에서 접근 가능
-        refreshTokenCookie.setDomain("mercuryplanet.co.kr");  // 도메인 간 쿠키 공유
-        refreshTokenCookie.setAttribute("SameSite", "None");
-        refreshTokenCookie.setMaxAge((int) refreshTokenValidity / 1000); // ms를 초 단위로 변환
-        response.addCookie(refreshTokenCookie);
+//        // Refresh Token은 보안을 위해 HttpOnly 쿠키로 설정
+//        Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
+//        refreshTokenCookie.setHttpOnly(true); // JavaScript에서 접근 방지
+//        refreshTokenCookie.setSecure(true); // HTTPS만 허용
+//        refreshTokenCookie.setPath("/"); // 모든 경로에서 접근 가능
+//        refreshTokenCookie.setDomain("mercuryplanet.co.kr");  // 도메인 간 쿠키 공유
+//        refreshTokenCookie.setAttribute("SameSite", "None");
+//        refreshTokenCookie.setMaxAge((int) refreshTokenValidity / 1000); // ms를 초 단위로 변환
+//        response.addCookie(refreshTokenCookie);
+
+        // Refresh Token을 헤더에 추가
+        response.setHeader("Refresh-Token", refreshToken);
+
 
         // 리다이렉트 URL에 토큰 포함하여 이동
         String targetUrl = UriComponentsBuilder.fromUriString("https://www.mercuryplanet.co.kr/login/success")
                 .queryParam("access_token", accessToken)
+                .queryParam("refresh_token", refreshToken)
                 .queryParam("isNewUser", isNewUser)
                 .build(true).toUriString();
 

@@ -94,16 +94,17 @@ public class UserService {
 
         // 토큰 설정
         response.setHeader("Authorization", "Bearer " + accessToken);
+        response.setHeader("Refresh-Token", refreshToken);
 
-        // Refresh Token 쿠키 설정
-        Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setDomain("mercuryplanet.co.kr");
-        refreshTokenCookie.setAttribute("SameSite", "None");
-        refreshTokenCookie.setMaxAge((int) refreshTokenValidity / 1000);
-        response.addCookie(refreshTokenCookie);
+//        // Refresh Token 쿠키 설정
+//        Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
+//        refreshTokenCookie.setHttpOnly(true);
+//        refreshTokenCookie.setSecure(true);
+//        refreshTokenCookie.setPath("/");
+//        refreshTokenCookie.setDomain("mercuryplanet.co.kr");
+//        refreshTokenCookie.setAttribute("SameSite", "None");
+//        refreshTokenCookie.setMaxAge((int) refreshTokenValidity / 1000);
+//        response.addCookie(refreshTokenCookie);
     }
 
     public User getUser(String accessToken) {
