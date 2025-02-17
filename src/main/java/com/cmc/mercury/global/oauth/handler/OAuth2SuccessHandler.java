@@ -71,6 +71,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .queryParam("access_token", accessToken)
                 .queryParam("refresh_token", refreshToken)
                 .queryParam("isNewUser", isNewUser)
+                .queryParam("oauthType", user.getOauthType())
                 .build(true).toUriString();
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
