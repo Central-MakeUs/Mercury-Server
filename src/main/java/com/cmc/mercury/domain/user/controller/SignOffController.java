@@ -51,12 +51,12 @@ public class SignOffController {
         request.getSession().invalidate();  // 세션 초기화
         SecurityContextHolder.clearContext();  // Spring Security 인증 정보 제거
 
-        // HttpOnly 쿠키 제거
+/*        // HttpOnly 쿠키 제거
         Cookie cookie = new Cookie("refreshToken", null);
         cookie.setHttpOnly(true);
         // cookie.setSecure(true);
         cookie.setPath("/");
         cookie.setMaxAge(0); // 쿠키 즉시 삭제
-        response.addCookie(cookie);
+        response.addCookie(cookie);*/
     }
 }
