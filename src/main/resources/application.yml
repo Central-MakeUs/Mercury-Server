@@ -107,3 +107,11 @@ aladin:
     url: https://www.aladin.co.kr/ttb/api/ItemSearch.aspx?QueryType=Keyword&SearchTarget=All&Cover=Big&Output=JS
     # 검색어 종류: 제목+저자, 검색 대상: 전체, 표지 이미지 크기: 가장 큰 크기, 출력방법: JSON
     ttbkey: ${ALADIN_TTB_KEY}
+
+# 세션 유지를 위한 쿠키 설정
+server:
+  servlet:
+    session:
+      cookie:
+        same-site: none
+        secure: true
