@@ -58,7 +58,7 @@ spring:
 
 apple:
   url: https://appleid.apple.com
-  key-path: ${OAUTH_APPLE_P8}
+  # key-path: ${OAUTH_APPLE_P8}
   key-content: ${OAUTH_APPLE_P8_KEY_CONTENT}
   cid: ${OAUTH_APPLE_CID}
   tid: ${OAUTH_APPLE_TID}
