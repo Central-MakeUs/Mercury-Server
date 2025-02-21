@@ -82,5 +82,7 @@ public class User extends BaseEntity {
         this.nickname = nickname;
     }
 
-    public void deleteUser() { this.userStatus = UserStatus.INACTIVE; }
+    public void updateUserStatus(UserStatus userStatus) {
+        this.userStatus = userStatus;
+    }
 }

@@ -1,7 +1,10 @@
 package com.cmc.mercury.domain.user.service;
 
+import com.cmc.mercury.domain.mypage.entity.Habit;
+import com.cmc.mercury.domain.mypage.repository.HabitRepository;
 import com.cmc.mercury.domain.user.entity.OAuthType;
 import com.cmc.mercury.domain.user.entity.User;
+import com.cmc.mercury.domain.user.entity.UserStatus;
 import com.cmc.mercury.domain.user.repository.UserRepository;
 import com.cmc.mercury.domain.user.response.UserTestRequest;
 import com.cmc.mercury.global.exception.CustomException;
@@ -33,6 +36,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final HttpServletResponse response;
+    private final HabitRepository habitRepository;
 
     @Transactional
     public User createTestUser(UserTestRequest request) {
@@ -46,6 +50,11 @@ public class UserService {
 
 
         if (existingUser != null) {
+            if (existingUser.getUserStatus() == UserStatus.INACTIVE) {
+                // 회원탈퇴한 유저 재가입
+                existingUser.updateUserStatus(UserStatus.ACTIVE);
+                userRepository.save(existingUser);
+            }
             // 기존 유저가 있으면 로그인 처리 (토큰 갱신)
             setTestUserTokens(existingUser, request.isShortLivedAccessToken());
             return existingUser;

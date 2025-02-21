@@ -30,7 +30,7 @@ public class SignOffService {
             throw new CustomException(ErrorCode.ALREADY_WITHDRAWN);
         }
 
-        user.deleteUser();
+        user.updateUserStatus(UserStatus.INACTIVE);
         user.updateRefreshToken(null); // Refresh Token 삭제
 
         return user;
