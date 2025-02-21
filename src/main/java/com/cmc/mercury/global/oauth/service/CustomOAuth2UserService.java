@@ -1,8 +1,6 @@
 package com.cmc.mercury.global.oauth.service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.cmc.mercury.domain.mypage.entity.Habit;
-import com.cmc.mercury.domain.mypage.repository.HabitRepository;
 import com.cmc.mercury.domain.user.entity.OAuthType;
 import com.cmc.mercury.domain.user.entity.User;
 import com.cmc.mercury.domain.user.entity.UserStatus;
@@ -36,7 +34,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
     private final AppleIdTokenVerifier appleIdTokenVerifier;
-    private final HabitRepository habitRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {

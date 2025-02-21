@@ -1,7 +1,5 @@
 package com.cmc.mercury.domain.user.service;
 
-import com.cmc.mercury.domain.mypage.entity.Habit;
-import com.cmc.mercury.domain.mypage.repository.HabitRepository;
 import com.cmc.mercury.domain.user.entity.OAuthType;
 import com.cmc.mercury.domain.user.entity.User;
 import com.cmc.mercury.domain.user.entity.UserStatus;
@@ -36,7 +34,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final HttpServletResponse response;
-    private final HabitRepository habitRepository;
 
     @Transactional
     public User createTestUser(UserTestRequest request) {
