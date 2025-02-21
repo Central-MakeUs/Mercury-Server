@@ -33,7 +33,7 @@ import java.util.Optional;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
-    private final AppleIdTokenVerifier  appleIdTokenVerifier;
+    private final AppleIdTokenVerifier appleIdTokenVerifier;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -98,10 +98,23 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             Optional<User> existingUser = userRepository.findByOauthTypeAndOauthId(oAuthType, oauthId);
             boolean isNewUser = existingUser.isEmpty(); // 존재하지 않으면 회원가입
 
-            User user = existingUser.orElseGet(() -> {
+            // 기존 유저 혹은 탈퇴한 사용자인지 확인
+            User user;
+            if (!isNewUser) {
+                User existing = existingUser.get();
+                if (existing.getUserStatus() == UserStatus.INACTIVE) {
+                    log.info("탈퇴한 회원 재가입 - 상태를 ACTIVE로 변경");
+                    existing.updateUserStatus(UserStatus.ACTIVE);
+                    isNewUser = true;
+                    user = userRepository.save(existing);
+                } else {
+                    user = existing;
+                }
+            } else {
                 log.info("새로운 사용자 생성 시도");
-                return createUser(oAuth2UserInfo);
-            });
+                user = createUser(oAuth2UserInfo);
+            }
+
             log.info("사용자 조회/생성 완료: userId={}", user.getId());
 
             // 회원가입 여부를 Security Context에 저장 (OAuth2User에 포함)
