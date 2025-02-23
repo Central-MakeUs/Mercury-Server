@@ -1,5 +1,7 @@
 package com.cmc.mercury.domain.user.service;
 
+import com.cmc.mercury.domain.mypage.entity.Habit;
+import com.cmc.mercury.domain.mypage.repository.HabitRepository;
 import com.cmc.mercury.domain.user.entity.OAuthType;
 import com.cmc.mercury.domain.user.entity.User;
 import com.cmc.mercury.domain.user.entity.UserStatus;
@@ -34,6 +36,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final HttpServletResponse response;
+    private final HabitRepository habitRepository;
 
     @Transactional
     public User createTestUser(UserTestRequest request) {
@@ -64,6 +67,13 @@ public class UserService {
         User savedUser = userRepository.save(newUser);
 
         setTestUserTokens(savedUser, request.isShortLivedAccessToken());
+
+        // 새 User가 생성되면 Habit도 자동 생성
+        Habit habit = Habit.builder()
+                .user(savedUser)
+                .streakDays(0) // 초기 streak = 0
+                .build();
+        habitRepository.save(habit);
 
         return savedUser;
     }
