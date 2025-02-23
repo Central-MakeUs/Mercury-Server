@@ -1,5 +1,8 @@
 package com.cmc.mercury.domain.timer.service;
 
+import com.cmc.mercury.domain.mypage.entity.HabitHistory;
+import com.cmc.mercury.domain.mypage.repository.HabitHistoryRepository;
+import com.cmc.mercury.domain.mypage.service.MyPageService;
 import com.cmc.mercury.domain.timer.dto.TimerListResponse;
 import com.cmc.mercury.domain.timer.dto.TimerRequest;
 import com.cmc.mercury.domain.timer.dto.TimerResponse;
@@ -12,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,7 +25,8 @@ import java.util.List;
 public class TimerService {
 
     private final TimerRepository timerRepository;
-    private final UserService userService;
+    private final HabitHistoryRepository habitHistoryRepository;
+    private final MyPageService myPageService;
 
     private static final int MIN_EXP_MINUTES = 5;
     private static final int MAX_EXP_MINUTES = 25;
@@ -50,6 +55,14 @@ public class TimerService {
 
         // User의 총 경험치 업데이트
         user.updateExp(user.getExp() + newExp);
+
+        // 날짜별 습관쌓기 기록
+        if (request.seconds() >= 10) {
+            LocalDate date = LocalDate.now();
+            HabitHistory history = myPageService.saveHabitHistoryIfNotExists(user.getId(), date, newExp);
+            history.updateHasTimer();
+            habitHistoryRepository.save(history);
+        }
 
         return TimerResponse.of(savedTimer);
     }
