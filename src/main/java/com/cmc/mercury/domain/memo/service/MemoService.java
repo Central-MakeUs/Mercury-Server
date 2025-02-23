@@ -5,6 +5,9 @@ import com.cmc.mercury.domain.memo.dto.MemoResponse;
 import com.cmc.mercury.domain.memo.dto.MemoUpdateRequest;
 import com.cmc.mercury.domain.memo.entity.Memo;
 import com.cmc.mercury.domain.memo.repository.MemoRepository;
+import com.cmc.mercury.domain.mypage.entity.HabitHistory;
+import com.cmc.mercury.domain.mypage.repository.HabitHistoryRepository;
+import com.cmc.mercury.domain.mypage.service.MyPageService;
 import com.cmc.mercury.domain.record.entity.Record;
 import com.cmc.mercury.domain.record.entity.RecordDetail;
 import com.cmc.mercury.domain.record.repository.RecordRepository;
@@ -17,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -30,7 +34,8 @@ public class MemoService {
 
     private final MemoRepository memoRepository;
     private final RecordRepository recordRepository;
-    private final UserService userService;
+    private final HabitHistoryRepository habitHistoryRepository;
+    private final MyPageService myPageService;
 
     @Transactional
     public MemoResponse createMemo(User user, Long recordId, MemoCreateRequest request) {
@@ -66,6 +71,12 @@ public class MemoService {
 
         // 사용자 경험치 업데이트
         user.updateExp(user.getExp() + acquiredExp);
+
+        // 날짜별 습관쌓기 기록
+        LocalDate date = LocalDate.now();
+        HabitHistory history = myPageService.saveHabitHistoryIfNotExists(user.getId(), date, acquiredExp);
+        history.updateHasRecord();
+        habitHistoryRepository.save(history);
 
         return MemoResponse.from(savedMemo, recordId);
     }
