@@ -1,6 +1,8 @@
 package com.cmc.mercury.global.oauth.service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.cmc.mercury.domain.mypage.entity.Habit;
+import com.cmc.mercury.domain.mypage.repository.HabitRepository;
 import com.cmc.mercury.domain.user.entity.OAuthType;
 import com.cmc.mercury.domain.user.entity.User;
 import com.cmc.mercury.domain.user.entity.UserStatus;
@@ -34,6 +36,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
     private final AppleIdTokenVerifier appleIdTokenVerifier;
+    private final HabitRepository habitRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -157,6 +160,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .userStatus(UserStatus.ACTIVE)
                 .build();
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // 새 User가 생성되면 Habit도 자동 생성
+        Habit habit = Habit.builder()
+                .user(savedUser)
+                .streakDays(0) // 초기 streak = 0
+                .build();
+        habitRepository.save(habit);
+
+        return savedUser;
     }
 }
