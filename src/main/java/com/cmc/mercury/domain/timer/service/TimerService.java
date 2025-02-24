@@ -28,9 +28,8 @@ public class TimerService {
     private final HabitHistoryRepository habitHistoryRepository;
     private final MyPageService myPageService;
 
-    private static final int MIN_EXP_MINUTES = 5;
-    private static final int MAX_EXP_MINUTES = 25;
-    private static final int DAILY_EXP_LIMIT = 120;
+    private static final int MAX_EXP_SECONDS = 1800;
+    private static final int DAILY_EXP_LIMIT = 180;
 
 
     @Transactional
@@ -80,11 +79,10 @@ public class TimerService {
 
     // 타이머 기록 시간에 따라 경험치 계산
     private int calculateExp(int seconds) {
-        int minutes = seconds / 60;
+        int exp = seconds / 10;
 
-        if (minutes < MIN_EXP_MINUTES) return 0;
-        if (minutes > MAX_EXP_MINUTES) return 25;
-        return minutes;
+        if (exp > MAX_EXP_SECONDS) return DAILY_EXP_LIMIT;
+        return exp;
     }
 
     // 오늘 획득한 총 경험치 계산
