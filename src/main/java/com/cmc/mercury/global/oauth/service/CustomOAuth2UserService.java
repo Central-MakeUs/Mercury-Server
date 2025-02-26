@@ -3,9 +3,9 @@ package com.cmc.mercury.global.oauth.service;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.cmc.mercury.domain.mypage.entity.Habit;
 import com.cmc.mercury.domain.mypage.repository.HabitRepository;
-import com.cmc.mercury.domain.user.entity.OAuthType;
-import com.cmc.mercury.domain.user.entity.User;
-import com.cmc.mercury.domain.user.entity.UserStatus;
+import com.cmc.mercury.domain.user.entity.*;
+import com.cmc.mercury.domain.user.repository.AdjectiveRepository;
+import com.cmc.mercury.domain.user.repository.NounRepository;
 import com.cmc.mercury.domain.user.repository.UserRepository;
 import com.cmc.mercury.global.exception.CustomException;
 import com.cmc.mercury.global.exception.ErrorCode;
@@ -37,6 +37,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
     private final AppleIdTokenVerifier appleIdTokenVerifier;
     private final HabitRepository habitRepository;
+    private final AdjectiveRepository adjectiveRepository;
+    private final NounRepository nounRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -155,6 +157,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         User user = User.builder()
                 .email(oAuth2UserInfo.getEmail())
+                .nickname(assignNickname())
                 .oauthType(oAuth2UserInfo.getOAuthType())
                 .oauthId(oAuth2UserInfo.getOAuthId())
                 .userStatus(UserStatus.ACTIVE)
@@ -170,5 +173,19 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         habitRepository.save(habit);
 
         return savedUser;
+    }
+
+    private String assignNickname() {
+
+        String nickname;
+        do {
+            Adjective adj = adjectiveRepository.findRandomAdjective();
+            Noun noun = nounRepository.findRandomNoun();
+            nickname = adj.getWord() + noun.getWord();
+
+            // 8자 이하 조건 확인 & 중복 닉네임 체크
+        } while (userRepository.existsByNickname(nickname));
+
+        return nickname;
     }
 }
