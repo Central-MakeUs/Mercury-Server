@@ -20,7 +20,7 @@ public class User extends BaseEntity {
     @Column(name = "user_id")
     private Long id;
 
-//    @Column(nullable = false)
+    @Column(nullable = false)
 //    @Column(length = 30) // DB 컬럼 길이 제한 -> 바이트 단위라 한글을 위해 여유 있게
     private String nickname;
 
@@ -49,10 +49,10 @@ public class User extends BaseEntity {
     private UserStatus userStatus;
 
     @Builder
-    public User(String email, OAuthType oauthType,
+    public User(String email, String nickname, OAuthType oauthType,
                 String oauthId, UserStatus userStatus) {
         this.email = email;
-        this.nickname = "Mercury";
+        this.nickname = nickname;
         this.oauthType = oauthType;
         this.oauthId = oauthId;
         this.userStatus = userStatus;
@@ -61,9 +61,9 @@ public class User extends BaseEntity {
 
     // 게스트용 생성자
     @Builder(builderMethodName = "TestUserBuilder", buildMethodName = "TestUserBuild")
-    public User(String email) {
+    public User(String email, String nickname) {
         this.email = email;
-        this.nickname = "TestUser";
+        this.nickname = nickname;
         this.oauthType = OAuthType.TEST;
         this.oauthId = UUID.randomUUID().toString();;
         this.userStatus = UserStatus.ACTIVE;

@@ -2,9 +2,9 @@ package com.cmc.mercury.domain.user.service;
 
 import com.cmc.mercury.domain.mypage.entity.Habit;
 import com.cmc.mercury.domain.mypage.repository.HabitRepository;
-import com.cmc.mercury.domain.user.entity.OAuthType;
-import com.cmc.mercury.domain.user.entity.User;
-import com.cmc.mercury.domain.user.entity.UserStatus;
+import com.cmc.mercury.domain.user.entity.*;
+import com.cmc.mercury.domain.user.repository.AdjectiveRepository;
+import com.cmc.mercury.domain.user.repository.NounRepository;
 import com.cmc.mercury.domain.user.repository.UserRepository;
 import com.cmc.mercury.domain.user.response.UserTestRequest;
 import com.cmc.mercury.global.exception.CustomException;
@@ -37,6 +37,8 @@ public class UserService {
     private final JwtProvider jwtProvider;
     private final HttpServletResponse response;
     private final HabitRepository habitRepository;
+    private final AdjectiveRepository adjectiveRepository;
+    private final NounRepository nounRepository;
 
     @Transactional
     public User createTestUser(UserTestRequest request) {
@@ -62,6 +64,7 @@ public class UserService {
 
         User newUser = User.TestUserBuilder()
                         .email(request.email())
+                        .nickname(assignNickname())
                         .TestUserBuild();
 
         User savedUser = userRepository.save(newUser);
@@ -130,5 +133,19 @@ public class UserService {
 
         // 유효성 검증이 완료된 토큰에서 user 추출
         return jwtProvider.getUserFromToken(accessToken);
+    }
+
+    private String assignNickname() {
+
+        String nickname;
+        do {
+            Adjective adj = adjectiveRepository.findRandomAdjective();
+            Noun noun = nounRepository.findRandomNoun();
+            nickname = adj.getWord() + noun.getWord();
+
+            // 닉네임 중복인지 체크
+        } while (userRepository.existsByNickname(nickname));
+
+        return nickname;
     }
 }
