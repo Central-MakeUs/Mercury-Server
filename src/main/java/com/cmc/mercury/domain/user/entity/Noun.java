@@ -12,7 +12,7 @@ public class Noun {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "adj_id")
+    @Column(name = "noun_id")
     private Long id;
 
     @Column(nullable = false, unique = true)
