@@ -183,7 +183,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             Noun noun = nounRepository.findRandomNoun();
             nickname = adj.getWord() + noun.getWord();
 
-            // 8자 이하 조건 확인 & 중복 닉네임 체크
+            // 닉네임 중복인지 체크
         } while (userRepository.existsByNickname(nickname));
 
         return nickname;
