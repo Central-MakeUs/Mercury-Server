@@ -34,7 +34,7 @@ public record RecordResponse (
                         recordDetail.getUpdatedGauge(),
                         content,
                         record.getCreatedAt(),
-                        memo != null ? memo.getUpdatedAt() : record.getUpdatedAt(),
+                        memo != null ? memo.getCreatedAt() : record.getUpdatedAt(),
                         BookResponse.from(record.getBook()),
                         record.getAcquiredExp()
                 );

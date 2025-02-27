@@ -32,7 +32,7 @@ public record RecordDetailResponse(
                         recordDetail.getUpdatedGauge(),
                         BookResponse.from(record.getBook()),
                         record.getCreatedAt(),
-                        latestMemo != null ? latestMemo.getUpdatedAt() : record.getUpdatedAt(),
+                        latestMemo != null ? latestMemo.getCreatedAt() : record.getUpdatedAt(),
                         memos
                 );
         }
