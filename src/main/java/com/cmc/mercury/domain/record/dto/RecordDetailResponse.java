@@ -2,6 +2,7 @@ package com.cmc.mercury.domain.record.dto;
 
 import com.cmc.mercury.domain.book.dto.BookResponse;
 import com.cmc.mercury.domain.memo.dto.MemoResponse;
+import com.cmc.mercury.domain.memo.entity.Memo;
 import com.cmc.mercury.domain.record.entity.Record;
 import com.cmc.mercury.domain.record.entity.RecordDetail;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,13 +26,13 @@ public record RecordDetailResponse(
         @Schema(description = "메모 객체 목록")
         List<MemoResponse> memos
 ) {
-        public static RecordDetailResponse of(Record record, RecordDetail detail, List<MemoResponse> memos) {
+        public static RecordDetailResponse of(Record record, RecordDetail recordDetail, Memo latestMemo, List<MemoResponse> memos) {
                 return new RecordDetailResponse(
                         record.getId(),
-                        detail.getUpdatedGauge(),
+                        recordDetail.getUpdatedGauge(),
                         BookResponse.from(record.getBook()),
                         record.getCreatedAt(),
-                        record.getUpdatedAt(),
+                        latestMemo != null ? latestMemo.getCreatedAt() : record.getUpdatedAt(),
                         memos
                 );
         }

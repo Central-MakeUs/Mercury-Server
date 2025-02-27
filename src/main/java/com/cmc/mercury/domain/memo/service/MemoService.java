@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -112,8 +113,9 @@ public class MemoService {
         // db에 updatedAt이 바로 반영되어 응답하도록
         memoRepository.flush();
 
-        Record record = memo.getRecordDetail().getRecord();
-        record.updateLastModifiedDateWithDetail(memo.getUpdatedAt());
+//        수정은 날짜 바뀌지 않음
+//        Record record = memo.getRecordDetail().getRecord();
+//        record.updateLastModifiedDateWithDetail(memo.getUpdatedAt());
 
         return MemoResponse.from(memo, recordId);
     }
@@ -122,13 +124,20 @@ public class MemoService {
     public void deleteMemo(User user, Long recordId, Long memoId) {
 
         Memo memo = validateAndGetMemo(user.getId(), recordId, memoId);
+        Record record = memo.getRecordDetail().getRecord();
+        RecordDetail recordDetail = memo.getRecordDetail();
 
         // 사용자 경험치 차감
         // user.updateExp(user.getExp() - memo.getAcquiredExp());
 
-        memo.getRecordDetail().getMemos().remove(memo);
+        // 메모 삭제
+        // memo.getRecordDetail().getMemos().remove(memo);
+        memoRepository.delete(memo); // Memo 삭제하면 JPA가 자동으로 RecordDetail에서도 삭제
 
-        memoRepository.delete(memo);
+        // 남은 메모 중 최신 메모 찾기
+        Optional<Memo> latestMemo = memoRepository.findTopByRecordDetailOrderByCreatedAtDesc(recordDetail);
+        // RecordDetail의 updatedGauge 갱신 (없으면 0)
+        recordDetail.updateGauge(latestMemo.map(Memo::getGauge).orElse(0));
     }
 
     private Memo validateAndGetMemo(Long userId, Long recordId, Long memoId) {
