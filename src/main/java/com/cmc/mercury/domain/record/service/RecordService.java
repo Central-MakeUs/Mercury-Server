@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -99,7 +100,7 @@ public class RecordService {
         habitHistoryRepository.save(history);
 
         //* return RecordResponse.of(record, recordDetail, savedMemo.getContent());
-        return RecordResponse.of(savedRecord, savedRecord.getRecordDetail(), memo.getContent());
+        return RecordResponse.of(savedRecord, savedRecord.getRecordDetail(), memo, memo.getContent());
     }
 
     private int calculateRecordExp(Long userId, LocalDateTime deviceTime) {
@@ -160,6 +161,7 @@ public class RecordService {
 
         user.updateExp(user.getExp() - reduceExp);*/
 
+        // CascadeType.ALL로 인해 recordDetail도 같이 삭제
         recordRepository.delete(record);
     }
 
@@ -181,7 +183,9 @@ public class RecordService {
                 .map(memo -> MemoResponse.from(memo, record.getId()))
                 .toList();
 
-        return RecordDetailResponse.of(record, recordDetail, memoResponses);
+        Memo latestMemo = memoRepository.findTopByRecordDetailOrderByCreatedAtDesc(recordDetail).orElse(null);
+
+        return RecordDetailResponse.of(record, recordDetail, latestMemo, memoResponses);
     }
 
     public List<RecordResponse> toRecordResponses(List<Record> records) {
@@ -189,14 +193,12 @@ public class RecordService {
         // RecordResponse 리스트로 변환
         return records.stream()
                 .map(record -> {
-                    RecordDetail detail = record.getRecordDetail();
+                    RecordDetail recordDetail = record.getRecordDetail();
+                    Memo latestMemo = memoRepository.findTopByRecordDetailOrderByCreatedAtDesc(recordDetail).orElse(null);
 
-                    String latestMemoContent = memoRepository
-                            .findTopByRecordDetailOrderByUpdatedAtDesc(detail)
-                            .map(Memo::getContent)
-                            .orElse("");
+                    String latestMemoContent = (latestMemo != null) ? latestMemo.getContent() : "";
 
-                    return RecordResponse.of(record, detail, latestMemoContent);
+                    return RecordResponse.of(record, recordDetail, latestMemo, latestMemoContent);
                 })
                 .toList();
     }

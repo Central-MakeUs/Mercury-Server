@@ -13,8 +13,8 @@ import java.util.Optional;
 @Repository
 public interface MemoRepository extends JpaRepository<Memo, Long> {
 
-    // RecordDetail의 모든 Memo들을 찾아서 업데이트 순으로 정렬 후 최상단 반환
-    Optional<Memo> findTopByRecordDetailOrderByUpdatedAtDesc(RecordDetail recordDetail);
+    // RecordDetail의 모든 Memo들을 찾아서 생성순으로 정렬 후 최상단 반환
+    Optional<Memo> findTopByRecordDetailOrderByCreatedAtDesc(RecordDetail recordDetail);
 
     // RecordDetail의 모든 Memo들을 찾아서 생성 순으로 정렬 후 반환
     List<Memo> findAllByRecordDetailOrderByCreatedAtDesc(RecordDetail recordDetail);

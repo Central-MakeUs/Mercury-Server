@@ -1,11 +1,13 @@
 package com.cmc.mercury.domain.record.dto;
 
 import com.cmc.mercury.domain.book.dto.BookResponse;
+import com.cmc.mercury.domain.memo.entity.Memo;
 import com.cmc.mercury.domain.record.entity.Record;
 import com.cmc.mercury.domain.record.entity.RecordDetail;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Schema(title = "기록 객체 응답 형식")
 public record RecordResponse (
@@ -25,14 +27,14 @@ public record RecordResponse (
         @Schema(description = "얻은 경험치")
         int acquiredExp
 ) {
-        public static RecordResponse of(Record record, RecordDetail detail, String content) {
+        public static RecordResponse of(Record record, RecordDetail recordDetail, Memo memo, String content) {
 
                 return new RecordResponse(
                         record.getId(),
-                        detail.getUpdatedGauge(),
+                        recordDetail.getUpdatedGauge(),
                         content,
                         record.getCreatedAt(),
-                        record.getUpdatedAt(),
+                        memo != null ? memo.getUpdatedAt() : record.getUpdatedAt(),
                         BookResponse.from(record.getBook()),
                         record.getAcquiredExp()
                 );
