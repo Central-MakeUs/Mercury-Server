@@ -2,9 +2,9 @@ name: CI/CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
 
 jobs:
   build:
@@ -66,10 +66,6 @@ jobs:
       - name: Build with Gradle Wrapper
         run: ./gradlew build
 
-      # Docker 이미지 빌드
-      - name: docker image build
-        run: docker build --build-arg TZ=Asia/Seoul -t ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server .
-
       # DockerHub 로그인
       - name: docker login
         uses: docker/login-action@v2
@@ -77,9 +73,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      # DockerHub 이미지 푸시
-      - name: docker Hub push
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server
+      # 브랜치별 Docker 이미지 빌드 & 푸쉬
+      - name: Build Docker Image & Push DockerHub
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            docker build --build-arg TZ=Asia/Seoul --build-arg SPRING_PROFILES_ACTIVE=prod -t ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server:prod .
+            docker push ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server:prod
+          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            docker build --build-arg TZ=Asia/Seoul --build-arg SPRING_PROFILES_ACTIVE=dev -t ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server:dev .
+            docker push ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server:dev
+          fi
 
   deploy:
     needs: build
@@ -94,9 +97,18 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server
-            docker stop $(docker ps -q) || true
-            docker rm $(docker ps -a -q) || true
-            # 사용하지 않는 이미지 정리
-            docker image prune -f
-            docker run -d -e TZ=Asia/Seoul -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server
+            if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+              # 운영 서버 배포 (8080 포트)
+              docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server:prod
+              docker stop mercury-prod || true
+              docker rm mercury-prod || true
+              docker image prune -f || true
+              docker run -d --name mercury-prod -e SPRING_PROFILES_ACTIVE=prod -e TZ=Asia/Seoul -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server:prod
+            elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+              # 개발 서버 배포 (EC2의 8081 포트 → 컨테이너의 8080 포트)
+              docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server:dev
+              docker stop mercury-dev || true
+              docker rm mercury-dev || true
+              docker image prune -f || true
+              docker run -d --name mercury-dev -e SPRING_PROFILES_ACTIVE=dev -e TZ=Asia/Seoul -p 8081:8080 ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server:dev
+            fi
