@@ -79,7 +79,7 @@ jobs:
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
             docker build --build-arg TZ=Asia/Seoul --build-arg SPRING_PROFILES_ACTIVE=prod -t ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server:prod .
             docker push ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server:prod
-          elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+          elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
             docker build --build-arg TZ=Asia/Seoul --build-arg SPRING_PROFILES_ACTIVE=dev -t ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server:dev .
             docker push ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server:dev
           fi
@@ -104,7 +104,7 @@ jobs:
               docker rm mercury-prod || true
               docker image prune -f || true
               docker run -d --name mercury-prod -e SPRING_PROFILES_ACTIVE=prod -e TZ=Asia/Seoul -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server:prod
-            elif [[ "${{ github.ref }}" == "refs/heads/develop" ]]; then
+            elif [[ "${{ github.ref }}" == "refs/heads/dev" ]]; then
               # 개발 서버 배포 (EC2의 8081 포트 → 컨테이너의 8080 포트)
               docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server:dev
               docker stop mercury-dev || true
