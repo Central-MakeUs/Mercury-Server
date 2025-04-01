@@ -95,8 +95,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server
-            docker stop $(docker ps -q) || true
-            docker rm $(docker ps -a -q) || true
+            docker stop mercury-prod || true
+            docker rm mercury-prod || true
             # 사용하지 않는 이미지 정리
             docker image prune -f
-            docker run -d -e TZ=Asia/Seoul -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server
+            docker run -d --name mercury-prod -e TZ=Asia/Seoul -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/mercury-server
